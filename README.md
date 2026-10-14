@@ -4,6 +4,16 @@
 
 **[Скачать APK](https://github.com/Wannamingo/NHL-Legacy-2027/releases/download/v1.0.3/NHL-Legacy-2027.apk)** · [Релизы](https://github.com/Wannamingo/NHL-Legacy-2027/releases) · [English](README.en.md)
 
+## Скриншоты
+
+| Лаунчер | Настройки |
+| --- | --- |
+| ![Лаунчер NHL Legacy 2027 на английском](screenshots/launcher-en.png) | ![Настройки лаунчера на английском](screenshots/settings-en.png) |
+
+| Титульный экран | Матч |
+| --- | --- |
+| ![Титульный экран NHL Legacy Edition](screenshots/title-screen.png) | ![Матч NHL Legacy 2027](screenshots/match.png) |
+
 ## Установка
 
 1. Установите `NHL-Legacy-2027.apk` на устройство Android ARM64.

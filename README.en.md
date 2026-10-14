@@ -4,6 +4,16 @@ An unofficial Android ARM64 port of NHL Legacy Edition. Release `v1.0.3` include
 
 **[Download APK](https://github.com/Wannamingo/NHL-Legacy-2027/releases/download/v1.0.3/NHL-Legacy-2027.apk)** · [Releases](https://github.com/Wannamingo/NHL-Legacy-2027/releases) · [Русский](README.md)
 
+## Screenshots
+
+| Launcher | Settings |
+| --- | --- |
+| ![NHL Legacy 2027 launcher in English](screenshots/launcher-en.png) | ![Launcher settings in English](screenshots/settings-en.png) |
+
+| Title screen | Match |
+| --- | --- |
+| ![NHL Legacy Edition title screen](screenshots/title-screen.png) | ![NHL Legacy 2027 match](screenshots/match.png) |
+
 ## Installation
 
 1. Install `NHL-Legacy-2027.apk` on an ARM64 Android device.
