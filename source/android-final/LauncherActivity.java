@@ -33,6 +33,7 @@ public final class LauncherActivity extends Activity {
     static final String TOUCH = "touch_controls_157";
     private static final String[] TOUCH_MODES = {"off", "auto", "always"};
     static final String MATCH_QUALITY = QualitySettings151.KEY;
+    static final String UI_ENGLISH = "ui_english";
     private Spinner matchQuality;
     private static final String[] SHADOW_MODES = {"native", "filtered", "soft"};
     static final String DRIVER = "vulkan_driver_id";
@@ -84,7 +85,7 @@ public final class LauncherActivity extends Activity {
         title.setText("NHL Legacy 2027"); title.setTextSize(30);
         content.addView(title);
         TextView info = new TextView(this);
-        info.setText(tr("Нативный порт для Android\nРелиз 1.0.2"));
+        info.setText(tr("Нативный порт для Android\nРелиз 1.0.3"));
         info.setTextSize(18); content.addView(info);
         TextView formatTitle = new TextView(this);
         formatTitle.setText(tr("Формат экрана")); formatTitle.setTextSize(18);
@@ -149,6 +150,7 @@ public final class LauncherActivity extends Activity {
         cancelImport.setOnClickListener(view -> { cancelled.set(true); cancelImport.setEnabled(false); status.setText(tr("Отмена импорта…")); });
         launch = new Button(this); launch.setText(tr("Запустить игру"));
         gameLaunch150 = () -> startActivity(new Intent(this, GameActivity.class)
+            .putExtra(UI_ENGLISH, LauncherLanguage.isEnglish(this))
             .putExtra(DRIVER, getPreferences(MODE_PRIVATE).getString(DRIVER, DriverStore.SYSTEM))
             .putExtra(ASPECT, formats.getCheckedRadioButtonId() == standard.getId() ? "4:3"
                 : formats.getCheckedRadioButtonId() == wide.getId() ? "16:9" : "original")
@@ -545,7 +547,7 @@ public final class LauncherActivity extends Activity {
             try {
                 result.put("selectedDriver", selected); result.put("model", android.os.Build.MODEL);
                 result.put("androidApi", android.os.Build.VERSION.SDK_INT); result.put("buildFingerprint", android.os.Build.FINGERPRINT);
-                result.put("checkedAtMs", System.currentTimeMillis()); result.put("build", "1.0.2-final-20261014");
+                result.put("checkedAtMs", System.currentTimeMillis()); result.put("build", "1.0.3-final-20261014");
                 File user = new File(getFilesDir(), "user"); if (!user.isDirectory()) user.mkdirs();
                 File temporary = new File(user, "gpu-compatibility.json.tmp");
                 try (FileOutputStream output = new FileOutputStream(temporary)) { output.write(result.toString(2).getBytes("UTF-8")); output.getFD().sync(); }

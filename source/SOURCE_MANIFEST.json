@@ -1,7 +1,7 @@
 {
   "android-final/AndroidManifest.xml": {
     "bytes": 1685,
-    "sha256": "e3a62a92b59ede649de21ed58f3c4918916054dd402795ab137e02afff18f666"
+    "sha256": "f2b6f8f65991aef812bbd552449dc3a0b894385dd30814a0bdeab86a104f7e62"
   },
   "android-final/BuildInfo.java": {
     "bytes": 329,
@@ -20,8 +20,8 @@
     "sha256": "569831c0570f7b4a386d795fd0646a3ad9d3a02a766b0ab0356f5b1a08e6a4b6"
   },
   "android-final/GameActivity.java": {
-    "bytes": 20544,
-    "sha256": "7b54224419c1024c431b8c9f44332ed49ab9c25a461cd5392c1f7e1208154464"
+    "bytes": 20860,
+    "sha256": "ca7c742ed916d3103e1cfc88512c114c7808ef2e51aafd85b76a8433347fee3b"
   },
   "android-final/GameDataImporter.java": {
     "bytes": 10382,
@@ -52,12 +52,12 @@
     "sha256": "a8770aeb3522a23d7e4a44accfc08f24d5ecc04de0aee0f825419976202571b3"
   },
   "android-final/LauncherActivity.java": {
-    "bytes": 40101,
-    "sha256": "7ca7bcf7e9c02e4053ee38943601b48b527ee55134ef2856e7f3e3e7d5df76fd"
+    "bytes": 40220,
+    "sha256": "ffb92a91eba2f51e4eb99f81d50cdab643c2bf28501d9f2f5616ae604e85b8e3"
   },
   "android-final/LauncherLanguage.java": {
-    "bytes": 24495,
-    "sha256": "baf7a2987ac056c5f78625e4149ee2a099925220a9304ebde2b1f44abffcf963"
+    "bytes": 25858,
+    "sha256": "8b0a3e31ebdc61de5ea7caa5c15514171d88ef9f67bcf872bc5f836e564f4db4"
   },
   "android-final/LauncherPresentation152.java": {
     "bytes": 14631,
@@ -80,8 +80,8 @@
     "sha256": "a7da739f2a758b95dbad74822e084bdd2ce8d45367f95efb5fcbd4f2a3bec9aa"
   },
   "android-final/TouchPadView.java": {
-    "bytes": 11170,
-    "sha256": "5afdd2c2b9d6c6ae52f76fd1ba0ec1f6de301a56e8ce856c595ec1cd1960b415"
+    "bytes": 11238,
+    "sha256": "090b27a84b3b97c551560345603ed418cc1a9b38c11d8b203332cc8e4193879b"
   },
   "android-final/XdvdfsIso.java": {
     "bytes": 7946,

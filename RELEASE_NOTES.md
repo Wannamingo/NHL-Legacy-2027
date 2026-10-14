@@ -1,3 +1,13 @@
+## NHL Legacy 2027 — 1.0.3
+
+Выбранный в лаунчере язык RU/EN теперь используется на экране подготовки графики и в Android-настройках во время игры: меню Select, настройках кнопок, окне назначения и режиме перемещения кнопок. Лаунчер переключается сразу, внутриигровые экраны — при следующем запуске игры. Язык оригинального игрового интерфейса выбирается отдельно.
+
+The launcher’s RU/EN choice now carries into graphics preparation and in-game Android controls: the Select menu, game settings, button mapping, and button-layout editor. The launcher updates immediately; in-game Android screens use the choice on the next game launch. The original game language remains separate.
+
+Signed Android ARM64 APK, `versionCode 14`, same package and signing certificate as 1.0.2. Native libraries, game assets, and the ISO importer are unchanged byte for byte. The Y700 installed this version over 1.0.2 without deleting imported game files. Device checks confirmed the graphics-preparation screen and game settings in both EN and RU, the English button-mapping and layout screens, and both Select-menu languages. A match was not replayed for this text-only update.
+
+---
+
 ## NHL Legacy 2027 — 1.0.2
 
 Лаунчер теперь поддерживает русский и английский языки. Кнопка **RU / EN** в правом верхнем углу переключает текст сразу, сохраняет выбор для следующих запусков и работает независимо от языка самой игры. Переведены главный экран, настройки, импорт ISO, составы, видеодрайверы и сообщения об ошибках. Справка первого запуска исправлена: игровые данные импортируются из ISO.

@@ -33,6 +33,7 @@ import org.libsdl.app.SDLActivity;
 
 public final class GameActivity extends SDLActivity {
     private TouchPadView touchPad;
+    private boolean englishUi;
     private boolean overlayPaused,settingsOpen,menuOpen,activityResumed;
     private AlertDialog menuDialog,settingsDialog;
     private int[] stagedBindings;
@@ -118,6 +119,7 @@ public final class GameActivity extends SDLActivity {
         }
     }
     @Override protected void onCreate(Bundle state) {
+        englishUi = getIntent().getBooleanExtra(LauncherActivity.UI_ENGLISH, false);
         File user = new File(getFilesDir(), "user");
         user.mkdirs();
         shaderProgress = new File(user, "shader-startup.progress");
@@ -193,7 +195,7 @@ public final class GameActivity extends SDLActivity {
         startupOverlay.setGravity(Gravity.CENTER);
         startupOverlay.setBackgroundColor(Color.rgb(17, 21, 27));
         TextView heading = new TextView(this);
-        heading.setText("Подготовка графики"); heading.setTextSize(26); heading.setTextColor(Color.WHITE);
+        heading.setText(uiText("Подготовка графики")); heading.setTextSize(26); heading.setTextColor(Color.WHITE);
         heading.setGravity(Gravity.CENTER);
         startupOverlay.addView(heading);
         startupBar = new ProgressBar(this, null, android.R.attr.progressBarStyleHorizontal);
@@ -206,7 +208,7 @@ public final class GameActivity extends SDLActivity {
         startupCount.setGravity(Gravity.CENTER);
         startupOverlay.addView(startupCount);
         TextView note = new TextView(this);
-        note.setText("Шейдеры сохраняются для следующих запусков."); note.setTextSize(16);
+        note.setText(uiText("Шейдеры сохраняются для следующих запусков.")); note.setTextSize(16);
         note.setTextColor(Color.LTGRAY); note.setPadding(16, 20, 16, 0);
         note.setGravity(Gravity.CENTER);
         startupOverlay.addView(note);
@@ -259,11 +261,12 @@ public final class GameActivity extends SDLActivity {
     @Override public void onBackPressed() {
         showGameMenu();
     }
+    String uiText(String russian) { return LauncherLanguage.text(englishUi, russian); }
     void showGameMenu() {
         if(settingsOpen||menuOpen||touchPad!=null&&touchPad.isEditing())return;
         pauseForOverlay();menuOpen=true;
         menuDialog=new AlertDialog.Builder(this).setTitle("NHL Legacy 2027")
-            .setItems(new String[]{"Продолжить игру","Настройки","Выход в лаунчер"},(dialog,index)->{
+            .setItems(new String[]{uiText("Продолжить игру"),uiText("Настройки"),uiText("Выход в лаунчер")},(dialog,index)->{
                 if(index==1){menuOpen=false;openGameSettings();}
                 else if(index==2){finish();android.os.Process.killProcess(android.os.Process.myPid());}
             }).setOnDismissListener(dialog->{menuOpen=false;resumeAfterOverlay();}).create();
@@ -312,14 +315,14 @@ public final class GameActivity extends SDLActivity {
         LinearLayout content=new LinearLayout(this);content.setOrientation(LinearLayout.VERTICAL);
         content.setPadding(dp(24),dp(12),dp(24),dp(12));
         content.setBackgroundColor(0xf01b2935);
-        Button bindings=settingsButton("Назначение кнопок");content.addView(bindings);
-        Button layout=settingsButton("Расположение кнопок");content.addView(layout);
-        TextView note=settingLabel("Игра приостановлена. Настройки кнопок применятся после «Продолжить игру».");
+        Button bindings=settingsButton(uiText("Назначение кнопок"));content.addView(bindings);
+        Button layout=settingsButton(uiText("Расположение кнопок"));content.addView(layout);
+        TextView note=settingLabel(uiText("Игра приостановлена. Настройки кнопок применятся после «Продолжить игру»."));
         note.setTextSize(14);content.addView(note);
-        Button resume=settingsButton("Продолжить игру");content.addView(resume);
-        Button cancel=settingsButton("Отмена");content.addView(cancel);
+        Button resume=settingsButton(uiText("Продолжить игру"));content.addView(resume);
+        Button cancel=settingsButton(uiText("Отмена"));content.addView(cancel);
         ScrollView scroll=new ScrollView(this);scroll.addView(content);
-        settingsDialog=new AlertDialog.Builder(this).setTitle("Настройки игры")
+        settingsDialog=new AlertDialog.Builder(this).setTitle(uiText("Настройки игры"))
             .setView(scroll).setCancelable(false).create();
         bindings.setOnClickListener(view->showBindingDialog());
         layout.setOnClickListener(view->{settingsDialog.dismiss();touchPad.beginEditing();});
@@ -351,9 +354,9 @@ public final class GameActivity extends SDLActivity {
             rows.addView(selector);
         }
         ScrollView list=new ScrollView(this);list.addView(rows);
-        new AlertDialog.Builder(this).setTitle("Назначение экранных кнопок")
-            .setView(list).setPositiveButton("Готово",(dialog,which)->stagedBindings=working)
-            .setNegativeButton("Отмена",null).show();
+        new AlertDialog.Builder(this).setTitle(uiText("Назначение экранных кнопок"))
+            .setView(list).setPositiveButton(uiText("Готово"),(dialog,which)->stagedBindings=working)
+            .setNegativeButton(uiText("Отмена"),null).show();
     }
     void onTouchLayoutEdited(boolean saved){
         if(settingsOpen)showSettingsDialog();else resumeAfterOverlay();

@@ -192,10 +192,10 @@ final class TouchPadView extends View {
         }else{
             float h=getHeight()*.13f;
             style(0xe1212935,Paint.Style.FILL,1);canvas.drawRoundRect(getWidth()*.15f,h*.15f,getWidth()*.85f,h,14,14,paint);
-            label(canvas,"Сохранить",getWidth()*.24f,h*.58f,u*.020f,0xffffffff);
-            label(canvas,"Сброс",getWidth()*.50f,h*.58f,u*.020f,0xffffffff);
-            label(canvas,"Отмена",getWidth()*.76f,h*.58f,u*.020f,0xffffffff);
-            label(canvas,"Перетащите кнопки · Игра приостановлена",getWidth()*.5f,h+u*.025f,u*.019f,0xffffffff);
+            label(canvas,activity.uiText("Сохранить"),getWidth()*.24f,h*.58f,u*.020f,0xffffffff);
+            label(canvas,activity.uiText("Сброс"),getWidth()*.50f,h*.58f,u*.020f,0xffffffff);
+            label(canvas,activity.uiText("Отмена"),getWidth()*.76f,h*.58f,u*.020f,0xffffffff);
+            label(canvas,activity.uiText("Перетащите кнопки · Игра приостановлена"),getWidth()*.5f,h+u*.025f,u*.019f,0xffffffff);
         }
     }
 }

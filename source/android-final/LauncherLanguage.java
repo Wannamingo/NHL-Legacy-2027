@@ -6,13 +6,27 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Launcher-only language choice; the game language remains independent. */
+/** Language for the Android launcher, startup screen, and in-game Android overlays.
+ * The original game's own language remains independent. */
 final class LauncherLanguage {
     private static final String KEY = "launcher_language";
     private static final Map<String, String> ENGLISH;
     static {
         HashMap<String, String> items = new HashMap<>();
-        items.put("Нативный порт для Android\nРелиз 1.0.2", "Native Android port\nRelease 1.0.2");
+        items.put("Нативный порт для Android\nРелиз 1.0.3", "Native Android port\nRelease 1.0.3");
+        items.put("Подготовка графики", "Preparing graphics");
+        items.put("Шейдеры сохраняются для следующих запусков.", "Shaders are cached for future launches.");
+        items.put("Продолжить игру", "Resume game");
+        items.put("Выход в лаунчер", "Exit to launcher");
+        items.put("Назначение кнопок", "Button mapping");
+        items.put("Расположение кнопок", "Button layout");
+        items.put("Игра приостановлена. Настройки кнопок применятся после «Продолжить игру».", "Game paused. Button changes take effect after you select “Resume game”.");
+        items.put("Отмена", "Cancel");
+        items.put("Настройки игры", "Game settings");
+        items.put("Назначение экранных кнопок", "On-screen button mapping");
+        items.put("Сохранить", "Save");
+        items.put("Сброс", "Reset");
+        items.put("Перетащите кнопки · Игра приостановлена", "Drag the buttons · Game paused");
         items.put("Формат экрана", "Display aspect ratio");
         items.put("Исходные пропорции", "Original aspect ratio");
         items.put("Качество графики", "Graphics quality");
@@ -215,7 +229,11 @@ final class LauncherLanguage {
     }
 
     static String text(Activity activity, String russian) {
-        if (!isEnglish(activity)) return russian;
+        return text(isEnglish(activity), russian);
+    }
+
+    static String text(boolean english, String russian) {
+        if (!english) return russian;
         String translated = ENGLISH.get(russian);
         return translated != null ? translated : russian;
     }
