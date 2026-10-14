@@ -2,7 +2,7 @@
 
 An unofficial Android ARM64 port of NHL Legacy Edition. Release `v1.0.3` includes the NHL Legacy 2027 launcher, Vulkan renderer, touch controls, and import from your own Xbox 360 ISO.
 
-**[Download APK](https://github.com/Wannamingo/NHL-Legacy-2027/releases/download/v1.0.3/NHL-Legacy-2027.apk)** · [Releases](https://github.com/Wannamingo/NHL-Legacy-2027/releases) · [Русский](README.md)
+**[Download APK](https://github.com/Wannamingo/NHL-Legacy-2027/releases/download/v1.0.3/NHL-Legacy-2027.apk)** · [Roster updates](docs/roster-updates.en.md) · [Releases](https://github.com/Wannamingo/NHL-Legacy-2027/releases) · [Русский](README.md)
 
 ## Screenshots
 
@@ -21,7 +21,7 @@ An unofficial Android ARM64 port of NHL Legacy Edition. Release `v1.0.3` include
 3. Select **Import ISO** in the launcher. The app extracts the 20 required files (about **6.3 GB**) into app storage and verifies their sizes and SHA-256 hashes. Keep enough free space for the extracted files. The image can be removed from the device after a successful import.
 4. Launch the game. The system Vulkan driver and full arena are selected by default.
 
-ZIP import for **game data** has been removed. ZIP remains available separately for roster updates and optional AdrenoTools Vulkan drivers. The release does not include an ISO, game data, or roster updates.
+ZIP import for **game data** has been removed. ZIP remains available separately for roster updates and optional AdrenoTools Vulkan drivers. The release does not include an ISO or game data. The [latest community Xbox 360 roster we found, dated 7 October 2026](rosters/ROSTER%2020261007011552.zip), is provided separately from the APK; see [format requirements and import instructions](docs/roster-updates.en.md).
 
 ## Features
 
@@ -29,7 +29,7 @@ ZIP import for **game data** has been removed. ZIP remains available separately 
 - Russian and English launcher, graphics-preparation screen, and in-game Android settings: the **RU / EN** button in the upper right switches the launcher immediately and remembers your choice. In-game Android screens use the selected language on the next game launch. The original game's language is selected separately in the game.
 - Independent visibility controls for spectators, stands and seats, and bench players. On-ice player quality is retained.
 - System Vulkan driver or a user-imported AdrenoTools driver; driver changes require restarting the game. A graphics-cache clear option is available.
-- Per-profile roster ZIP updates for new games and seasons without rewriting existing saves.
+- Per-profile roster ZIP updates for new matches and seasons after selecting the roster in-game, without rewriting existing saves. A later import replaces only the previous launcher-managed import; [details](docs/roster-updates.en.md).
 - In-game control settings via the gear beside FPS or Select → Settings. Live render-resolution changes are disabled.
 
 ## Validation and limits
