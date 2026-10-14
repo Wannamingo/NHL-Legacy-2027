@@ -1,0 +1,103 @@
+--- a/include/rex/system/mmio_handler.h
++++ b/include/rex/system/mmio_handler.h
+@@ -66,6 +66,12 @@
+   bool CheckLoad(uint32_t virtual_address, uint32_t* out_value);
+   bool CheckStore(uint32_t virtual_address, uint32_t value);
+ 
++  // Optional write-watch-only callback. Returning false must not change host
++  // protection or handle unrelated faults; the normal fault path follows.
++  void set_write_watch_callback(AccessViolationCallback callback) {
++    write_watch_callback_ = callback;
++  }
++
+  protected:
+   MMIOHandler(uint8_t* virtual_membase, uint8_t* physical_membase, uint8_t* membase_end,
+               HostToGuestVirtual host_to_guest_virtual, const void* host_to_guest_virtual_context,
+@@ -85,6 +91,7 @@
+   const void* host_to_guest_virtual_context_;
+ 
+   AccessViolationCallback access_violation_callback_;
++  AccessViolationCallback write_watch_callback_ = nullptr;
+   void* access_violation_callback_context_;
+ 
+   static MMIOHandler* global_handler_;
+--- a/include/rex/system/xmemory.h
++++ b/include/rex/system/xmemory.h
+@@ -536,6 +536,9 @@
+ 
+   bool AccessViolationCallback(std::unique_lock<std::recursive_mutex> global_lock_locked_once,
+                                void* host_address, bool is_write);
++  static bool WriteWatchCallbackThunk(
++      std::unique_lock<std::recursive_mutex> global_lock_locked_once, void* context,
++      void* host_address, bool is_write);
+   static bool AccessViolationCallbackThunk(
+       std::unique_lock<std::recursive_mutex> global_lock_locked_once, void* context,
+       void* host_address, bool is_write);
+--- a/src/system/mmio_handler.cpp
++++ b/src/system/mmio_handler.cpp
+@@ -14,6 +14,7 @@
+ #include <utility>
+ 
+ #include <rex/assert.h>
++#include <rex/cvar.h>
+ #include <rex/exception_handler.h>
+ #include <rex/logging.h>
+ #include <rex/memory.h>
+@@ -22,6 +23,9 @@
+ #include <rex/types.h>
+ 
+ using namespace rex::arch;
++
++REXCVAR_DEFINE_BOOL(memory_write_watch_fast_path, false, "Memory",
++                   "Handle known guest physical write watches before querying host mappings");
+ 
+ namespace rex::runtime {
+ 
+@@ -406,6 +410,16 @@
+     // clears the watch we just hit).
+     // Do this under the lock so we don't introduce another race condition.
+     auto lock = global_critical_region_.Acquire();
++    if (is_write && write_watch_callback_ && REXCVAR_GET(memory_write_watch_fast_path)) {
++      // The watch flags and protection changes share this lock. A genuine
++      // watched write performs exactly the existing invalidation/unprotect
++      // operation; no permission cache or stale mapping snapshot is needed.
++      if (write_watch_callback_(std::move(lock), access_violation_callback_context_,
++                                fault_host_address, true)) {
++        return true;
++      }
++      lock = global_critical_region_.Acquire();
++    }
+     memory::PageAccess cur_access;
+     size_t page_length = memory::page_size();
+     memory::QueryProtect(fault_host_address, page_length, cur_access);
+--- a/src/system/xmemory.cpp
++++ b/src/system/xmemory.cpp
+@@ -262,6 +262,7 @@
+     assert_always();
+     return false;
+   }
++  mmio_handler_->set_write_watch_callback(WriteWatchCallbackThunk);
+   REXSYS_DEBUG("Installed MMIO handler for physical address translation");
+ 
+   // ?
+@@ -642,6 +643,20 @@
+       std::move(global_lock_locked_once), host_address, is_write);
+ }
+ 
++bool Memory::WriteWatchCallbackThunk(
++    std::unique_lock<std::recursive_mutex> global_lock_locked_once, void* context,
++    void* host_address, bool is_write) {
++  auto* memory = reinterpret_cast<Memory*>(context);
++  if (!is_write ||
++      reinterpret_cast<uintptr_t>(host_address) < reinterpret_cast<uintptr_t>(memory->virtual_membase_) ||
++      reinterpret_cast<uintptr_t>(host_address) >= reinterpret_cast<uintptr_t>(memory->physical_membase_)) {
++    return false;
++  }
++  return memory->TriggerPhysicalMemoryCallbacks(
++      std::move(global_lock_locked_once), memory->HostToGuestVirtual(host_address), 1,
++      true, false);
++}
++
+ bool Memory::TriggerPhysicalMemoryCallbacks(
+     std::unique_lock<std::recursive_mutex> global_lock_locked_once, uint32_t virtual_address,
+     uint32_t length, bool is_write, bool unwatch_exact_range, bool unprotect) {

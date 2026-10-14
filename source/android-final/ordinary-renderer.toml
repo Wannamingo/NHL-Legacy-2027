@@ -1,0 +1,35 @@
+nhl_render_diagnostics = false
+nhl_capture_gpu_frame = false
+nhl_crowd_diagnostics = false
+nhl_benchmark_frames = false
+memory_write_watch_fast_path = false
+nhl_native_vp6 = true
+nhl_fence_wait_us = 0
+readback_resolve = "fast"
+vulkan_readback_resolve = true
+vulkan_readback_resolve_max_length = 3000000
+vulkan_gpu_timestamp_buckets = false
+vulkan_gpu_timestamp_trace_frames = 0
+vulkan_debug_log_frame_summaries_remaining = 0
+vulkan_debug_frame_summary_interval_frames = 120
+vulkan_reuse_transient_texture_descriptors = false
+vulkan_reuse_unchanged_draw_bindings = false
+occlusion_query_enable = true
+trace_gpu_prefix = "/data/user/0/org.nhllegacy.port/files/user/gpu-trace/"
+nhl_frame_time_hud = false
+guest_frame_limit = 60
+vulkan_separate_present_queue = false
+nhl_fence_pending_backoff_us = 100
+vulkan_bda_vertex_support = true
+vulkan_bda_vertex_loads = false
+vulkan_bda_preload_vertex_variants = true
+gpu_type0_bulk_registers = false
+async_shader_compilation = true
+
+nhl_native_vp6_alpha = true
+
+nhl_singlepass137 = true
+
+nhl_scene144 = true
+
+nhl_minimal_arena = false

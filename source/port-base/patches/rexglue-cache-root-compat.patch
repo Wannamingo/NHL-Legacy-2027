@@ -1,0 +1,43 @@
+diff --git a/include/rex/runtime.h b/include/rex/runtime.h
+index 3e47c9a..fb0c4fd 100644
+--- a/include/rex/runtime.h
++++ b/include/rex/runtime.h
+@@ -34,7 +34,7 @@ struct PPCFuncMapping;
+ REXCVAR_DECLARE(std::string, game_data_root);
+ REXCVAR_DECLARE(std::string, user_data_root);
+ REXCVAR_DECLARE(std::string, update_data_root);
+-REXCVAR_DECLARE(std::string, cache_path);
++REXCVAR_DECLARE(std::string, cache_root);
+ 
+ namespace rex {
+ 
+diff --git a/src/system/runtime.cpp b/src/system/runtime.cpp
+index 3d7005f..3d427b6 100644
+--- a/src/system/runtime.cpp
++++ b/src/system/runtime.cpp
+@@ -32,7 +32,7 @@
+ REXCVAR_DEFINE_STRING(game_data_root, "", "Runtime", "Override game data path");
+ REXCVAR_DEFINE_STRING(user_data_root, "", "Runtime", "Override user data path");
+ REXCVAR_DEFINE_STRING(update_data_root, "", "Runtime", "Override update data path");
+-REXCVAR_DEFINE_STRING(cache_path, "", "Runtime", "Override shader cache path");
++REXCVAR_DEFINE_STRING(cache_root, "", "Runtime", "Override shader cache path");
+ 
+ namespace rex {
+ 
+diff --git a/src/ui/rex_app.cpp b/src/ui/rex_app.cpp
+index b3caffb..172caf1 100644
+--- a/src/ui/rex_app.cpp
++++ b/src/ui/rex_app.cpp
+@@ -389,10 +389,10 @@ bool ReXApp::SetupEnvironment() {
+ 
+   // Cache: cvar override, or user_dir/cache
+   std::filesystem::path cache_dir;
+-  if (auto config_value = config_string("cache_path")) {
++  if (auto config_value = config_string("cache_root")) {
+     cache_dir = *config_value;
+   }
+-  std::string cache_path_cvar = REXCVAR_GET(cache_path);
++  std::string cache_path_cvar = REXCVAR_GET(cache_root);
+   if (!cache_path_cvar.empty()) {
+     cache_dir = cache_path_cvar;
+   }

@@ -1,0 +1,34 @@
+diff --git a/src/graphics/vulkan/pipeline_cache.cpp b/src/graphics/vulkan/pipeline_cache.cpp
+index 557bb2b..3221828 100644
+--- a/src/graphics/vulkan/pipeline_cache.cpp
++++ b/src/graphics/vulkan/pipeline_cache.cpp
+@@ -429,6 +429,14 @@ void VulkanPipelineCache::InitializeShaderStorage(const std::filesystem::path& c
+     return;
+   }
+   pipeline_storage_file_flush_needed_ = false;
++  // Android's a+b stream initially points at EOF. Read the existing header
++  // from the beginning, otherwise every launch discards the warm cache.
++  if (!rex::filesystem::Seek(pipeline_storage_file_, 0, SEEK_SET)) {
++    fclose(pipeline_storage_file_);
++    pipeline_storage_file_ = nullptr;
++    REXGPU_ERROR("Failed to seek to the Vulkan pipeline storage header");
++    return;
++  }
+   // 'XEPS'.
+   const uint32_t pipeline_storage_magic = 0x53504558;
+   const uint32_t pipeline_storage_magic_api = edram_fragment_shader_interlock ? 1u : 0u;
+@@ -515,6 +523,14 @@ void VulkanPipelineCache::InitializeShaderStorage(const std::filesystem::path& c
+   }
+   ++shader_storage_index_;
+   shader_storage_file_flush_needed_ = false;
++  if (!rex::filesystem::Seek(shader_storage_file_, 0, SEEK_SET)) {
++    fclose(shader_storage_file_);
++    shader_storage_file_ = nullptr;
++    fclose(pipeline_storage_file_);
++    pipeline_storage_file_ = nullptr;
++    REXGPU_ERROR("Failed to seek to the guest shader storage header");
++    return;
++  }
+   struct {
+     uint32_t magic;
+     uint32_t version_swapped;

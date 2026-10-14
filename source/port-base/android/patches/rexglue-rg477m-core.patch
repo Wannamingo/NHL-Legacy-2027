@@ -1,0 +1,73 @@
+diff --git a/src/core/fiber_aarch64.S b/src/core/fiber_aarch64.S
+index 218d1b8..ad9ed13 100644
+--- a/src/core/fiber_aarch64.S
++++ b/src/core/fiber_aarch64.S
+@@ -11,7 +11,8 @@
+  *
+  * Saves exactly the AAPCS64 callee-saved state: x19-x28, x29 (FP), x30 (LR)
+  * and the low 64 bits of v8-v15. Caller-saved registers are, by definition,
+- * already dead across the call. 160-byte frame, 16-byte aligned.
++ * already dead across the call. FPCR/FPSR are also fiber-local because guest
++ * FPSCR instructions change the host rounding mode. 176-byte aligned frame.
+  *
+  * @copyright   Copyright (c) 2026 Tom Clay <tomc@tctechstuff.com>
+  * @license     BSD 3-Clause License
+@@ -19,7 +20,7 @@
+ 
+ #if defined(__aarch64__)
+ 
+-#define FRAME_SIZE 160
++#define FRAME_SIZE 176
+ 
+ // NOTE: no preprocessor macros for the symbol boilerplate. On AArch64 ';' is a
+ // comment character, not a statement separator, so a one-line macro silently
+@@ -67,6 +68,9 @@ rex_fiber_switch:
+     stp     d10, d11, [sp, #112]
+     stp     d12, d13, [sp, #128]
+     stp     d14, d15, [sp, #144]
++    mrs     x2, fpcr
++    mrs     x3, fpsr
++    stp     x2, x3, [sp, #160]
+ 
+     mov     x2,  sp
+     str     x2,  [x0]           // *from_sp = sp
+@@ -82,6 +86,9 @@ rex_fiber_switch:
+     ldp     d10, d11, [sp, #112]
+     ldp     d12, d13, [sp, #128]
+     ldp     d14, d15, [sp, #144]
++    ldp     x2, x3, [sp, #160]
++    msr     fpcr, x2
++    msr     fpsr, x3
+     add     sp,  sp,  #FRAME_SIZE
+     .cfi_def_cfa_offset 0
+     ret
+@@ -125,6 +132,9 @@ rex_fiber_make_context:
+     stp     d10, d11, [x0, #112]
+     stp     d12, d13, [x0, #128]
+     stp     d14, d15, [x0, #144]
++    mrs     x2, fpcr
++    mrs     x3, fpsr
++    stp     x2, x3, [x0, #160]
+     ret
+     .cfi_endproc
+ #if !defined(__APPLE__)
+diff --git a/src/core/memory_posix.cpp b/src/core/memory_posix.cpp
+index 98f5575..5d6e64f 100644
+--- a/src/core/memory_posix.cpp
++++ b/src/core/memory_posix.cpp
+@@ -370,7 +370,14 @@ FileMappingHandle CreateFileMappingHandle(const std::filesystem::path& path, siz
+   // ASharedMemory for the 4.5 GB sparse backing object used by the Xbox 360
+   // guest address space. Some Android 16 and 17 devices reject that size via
+   // ASharedMemory_create even though an ordinary sparse memfd is valid.
+-  int sharedmem_fd = memfd_create(path.c_str(), MFD_CLOEXEC | MFD_ALLOW_SEALING);
++  // Resolve the API 30 symbol at runtime so the same binary can be linked for
++  // older Android versions. RG477M (API 34) provides this sparse-file backend.
++  using MemfdCreate = int (*)(const char*, unsigned int);
++  static const auto create_memfd =
++      reinterpret_cast<MemfdCreate>(dlsym(RTLD_DEFAULT, "memfd_create"));
++  int sharedmem_fd = create_memfd
++                         ? create_memfd(path.c_str(), MFD_CLOEXEC | MFD_ALLOW_SEALING)
++                         : -1;
+   if (sharedmem_fd >= 0) {
+     if (ftruncate64(sharedmem_fd, static_cast<off_t>(length)) == 0) {
+       // The guest mapping size is immutable after setup. Sealing only size

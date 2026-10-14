@@ -1,0 +1,52 @@
+--- a/src/ui/presenter.cpp
++++ b/src/ui/presenter.cpp
+@@ -14,6 +14,7 @@
+ #include <cctype>
+ #include <chrono>
+ #include <cmath>
++#include <thread>
+ #include <utility>
+ 
+ #include <rex/assert.h>
+@@ -34,6 +35,10 @@
+ 
+ REXCVAR_DEFINE_BOOL(host_present_from_non_ui_thread, true, "UI/Presenter",
+                     "Allow presentation from non-UI thread");
++
++REXCVAR_DEFINE_INT32(guest_frame_limit, 0, "UI/Presenter",
++                     "Maximum guest output frames per second (0 disables pacing)")
++    .range(0, 60);
+ 
+ REXCVAR_DEFINE_BOOL(presenter_strict_guest_output_backpressure, false, "UI/Presenter",
+                     "Block guest output when it would replace an unpresented frame in the "
+@@ -600,6 +605,19 @@
+       return false;
+     }
+     guest_output_active_last_refresh_ = true;
++    // Pace the actual guest output producer, independently of host vsync and
++    // FPS statistics. Slow frames never wait; a stall starts a new interval
++    // rather than producing a burst of catch-up frames. No UI lock is held.
++    const int32_t frame_limit = REXCVAR_GET(guest_frame_limit);
++    if (frame_limit > 0) {
++      const auto period = std::chrono::nanoseconds((1000000000LL + frame_limit - 1) / frame_limit);
++      if (guest_output_last_paced_.time_since_epoch().count()) {
++        std::this_thread::sleep_until(guest_output_last_paced_ + period);
++      }
++      guest_output_last_paced_ = std::chrono::steady_clock::now();
++    } else {
++      guest_output_last_paced_ = {};
++    }
+     // Present-cadence telemetry: the interval between guest output refreshes
+     // is the cadence the host presents at (painting is triggered per
+     // refresh), which VRR displays turn directly into perceived smoothness.
+--- a/include/rex/ui/presenter.h
++++ b/include/rex/ui/presenter.h
+@@ -1064,6 +1064,8 @@
+   // Accessible only by refreshing, whether the last refresh contained an image
+   // rather than being blank.
+   bool guest_output_active_last_refresh_ = false;
++  // Only the single guest output producer accesses this pacing timestamp.
++  std::chrono::steady_clock::time_point guest_output_last_paced_{};
+ 
+   // Guest frame timestamps for GetGuestFrameStats, written by the refreshing
+   // thread, read by any thread. Sized to cover the stats window even at very

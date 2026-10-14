@@ -1,0 +1,33 @@
+diff --git a/src/kernel/xboxkrnl/xboxkrnl_video.cpp b/src/kernel/xboxkrnl/xboxkrnl_video.cpp
+index f274640..ce8e003 100644
+--- a/src/kernel/xboxkrnl/xboxkrnl_video.cpp
++++ b/src/kernel/xboxkrnl/xboxkrnl_video.cpp
+@@ -242,7 +242,7 @@ void VdQueryVideoMode(X_VIDEO_MODE* video_mode) {
+   video_mode->display_width = display_width;
+   video_mode->display_height = display_height;
+   video_mode->is_interlaced = 0;
+-  video_mode->is_widescreen = display_width * 3 >= display_height * 4;
++  video_mode->is_widescreen = display_width * 3 > display_height * 4;
+   video_mode->is_hi_def = display_width >= 1280 || display_height >= 720;
+   video_mode->refresh_rate = refresh_rate_hz;
+   video_mode->video_standard = 1;  // NTSC
+diff --git a/src/ui/overlay/fps_overlay.cpp b/src/ui/overlay/fps_overlay.cpp
+index 54620b3..767cabe 100644
+--- a/src/ui/overlay/fps_overlay.cpp
++++ b/src/ui/overlay/fps_overlay.cpp
+@@ -36,6 +36,7 @@ void FpsOverlayDialog::OnDraw(ImGuiIO& io) {
+                        ImGuiWindowFlags_AlwaysAutoResize)) {
+     if (stats.frame_count > 0 && stats.fps > 0.0) {
+       ImGui::Text("%.0f FPS", stats.fps);
++#if !defined(__ANDROID__)
+       ImGui::PushFont(nullptr, 14.0f);
+       ImGui::Text("%.2f ms", stats.frame_time_ms);
+       // Time the GPU emulation thread spent blocked on host GPU fences last
+@@ -55,6 +56,7 @@ void FpsOverlayDialog::OnDraw(ImGuiIO& io) {
+         }
+       }
+       ImGui::PopFont();
++#endif
+     } else {
+       ImGui::TextUnformatted("-- FPS");
+     }

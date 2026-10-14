@@ -1,0 +1,28 @@
+--- a/src/ui/presenter.cpp
++++ b/src/ui/presenter.cpp
+@@ -813,6 +813,13 @@
+         kGuestFrameTimestampCount;
+     const std::chrono::steady_clock::time_point timestamp = guest_frame_timestamps_[index];
+     if (timestamp < window_start) {
++      // After a long stall the window may contain just one newly presented
++      // frame. Include its preceding frame to measure the real interval;
++      // time since that single new sample is not a frame rate.
++      if (frames_in_window == 1) {
++        oldest_in_window = timestamp;
++        ++frames_in_window;
++      }
+       break;
+     }
+     if (!frames_in_window) {
+@@ -847,11 +854,6 @@
+     const double partial_interval = std::min(
+         (span_to_now_seconds - span_between_frames_seconds) / mean_interval_seconds, 1.0);
+     stats.fps = (double(frames_in_window - 1) + partial_interval) / span_to_now_seconds;
+-  } else if (span_to_now_seconds > 0.0) {
+-    // A single frame in the window (or coincident timestamps): no interval to
+-    // measure, keep the frame-count estimate.
+-    stats.fps = double(frames_in_window) / span_to_now_seconds;
+-    stats.frame_time_ms = 1000.0 / stats.fps;
+   }
+   return stats;
+ }

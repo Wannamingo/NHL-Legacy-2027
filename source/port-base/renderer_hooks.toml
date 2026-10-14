@@ -1,0 +1,12 @@
+# NHL Legacy retail d818eb...: RenderDevice initialization.
+# Change the internal buffers before creation; leave display dimensions intact.
+[[midasm_hook]]
+address = 0x828A7334
+name = "NhlInternalWidth"
+registers = ["r11"]
+
+[[midasm_hook]]
+address = 0x828A7338
+name = "NhlInternalHeight"
+registers = ["r28"]
+after_instruction = true

@@ -1,0 +1,184 @@
+--- a/src/core/memory_posix.cpp
++++ b/src/core/memory_posix.cpp
+@@ -13,7 +13,6 @@
+ #include <cstddef>
+ #include <cstdio>
+ #include <cstring>
+-#include <fstream>
+ #include <string>
+ 
+ #include <fcntl.h>
+@@ -25,6 +24,10 @@
+ #include <rex/memory/utils.h>
+ #include <rex/platform.h>
+ #include <rex/string.h>
++
++#if REX_PLATFORM_LINUX
++#include "proc_maps_reader.h"
++#endif
+ 
+ #if REX_PLATFORM_ANDROID
+ #include <string.h>
+@@ -135,37 +138,15 @@
+ #if REX_PLATFORM_LINUX
+ namespace {
+ 
+-struct LinuxMapEntry {
+-  uintptr_t start = 0;
+-  uintptr_t end = 0;
+-  char perms[5] = {};
+-};
+-
+-// Parse a line from /proc/self/maps into a LinuxMapEntry
+-static bool ParseProcMapsLine(const std::string& line, LinuxMapEntry& out) {
+-  out = LinuxMapEntry{};
+-  unsigned long long start = 0, end = 0;
+-  char perms[5] = {};
+-  const int matched = std::sscanf(line.c_str(), "%llx-%llx %4s", &start, &end, perms);
+-  if (matched < 3)
+-    return false;
+-  out.start = static_cast<uintptr_t>(start);
+-  out.end = static_cast<uintptr_t>(end);
+-  std::memcpy(out.perms, perms, sizeof(out.perms));
+-  return out.start < out.end;
+-}
++using detail::LinuxMapEntry;
++using detail::ProcMapsReader;
+ 
+ // Find the mapping entry in /proc/self/maps that contains the given address
+ static bool FindEntryForAddress(void* address, LinuxMapEntry& out_entry) {
+   const uintptr_t addr = reinterpret_cast<uintptr_t>(address);
+-  std::ifstream maps("/proc/self/maps");
+-  if (!maps.is_open())
+-    return false;
+-  std::string line;
+-  while (std::getline(maps, line)) {
+-    LinuxMapEntry e;
+-    if (!ParseProcMapsLine(line, e))
+-      continue;
++  ProcMapsReader maps;
++  LinuxMapEntry e;
++  while (maps.Next(e)) {
+     if (addr >= e.start && addr < e.end) {
+       out_entry = e;
+       return true;
+@@ -185,16 +166,10 @@
+     return false;
+   }
+ 
+-  std::ifstream maps("/proc/self/maps");
+-  if (!maps.is_open())
+-    return false;
+-
++  ProcMapsReader maps;
+   uintptr_t cursor = begin;
+-  std::string line;
+-  while (std::getline(maps, line)) {
+-    LinuxMapEntry e;
+-    if (!ParseProcMapsLine(line, e))
+-      continue;
++  LinuxMapEntry e;
++  while (maps.Next(e)) {
+     if (e.end <= cursor)
+       continue;
+     if (e.start > cursor)
+--- /dev/null
++++ b/src/core/proc_maps_reader.h
+@@ -0,0 +1,97 @@
++#pragma once
++
++#include <cerrno>
++#include <cstddef>
++#include <cstdint>
++#include <cstring>
++#include <fcntl.h>
++#include <unistd.h>
++
++namespace rex::memory::detail {
++
++struct LinuxMapEntry {
++  uintptr_t start = 0;
++  uintptr_t end = 0;
++  char perms[5] = {};
++};
++
++// Read a fresh kernel snapshot for every query. Keep only the fixed-size
++// address/permission prefix: pathnames may be arbitrarily long. No allocation,
++// permission cache or libc formatted conversion is used on the fault path.
++class ProcMapsReader {
++ public:
++  ProcMapsReader() : fd_(open("/proc/self/maps", O_RDONLY | O_CLOEXEC)) {}
++  explicit ProcMapsReader(int owned_fd) : fd_(owned_fd) {}
++  ~ProcMapsReader() { if (fd_ >= 0) close(fd_); }
++  ProcMapsReader(const ProcMapsReader&) = delete;
++  ProcMapsReader& operator=(const ProcMapsReader&) = delete;
++
++  bool Next(LinuxMapEntry& entry) {
++    if (fd_ < 0) return false;
++    for (;;) {
++      if (position_ == size_) {
++        ssize_t count;
++        do { count = read(fd_, buffer_, sizeof(buffer_)); } while (count < 0 && errno == EINTR);
++        if (count <= 0) {
++          const bool parsed = count == 0 && prefix_size_ && ParsePrefix(prefix_, prefix_size_, entry);
++          prefix_size_ = 0;
++          return parsed;
++        }
++        position_ = 0;
++        size_ = static_cast<size_t>(count);
++      }
++      const char* begin = buffer_ + position_;
++      const char* newline = static_cast<const char*>(std::memchr(begin, '\n', size_ - position_));
++      const size_t span = newline ? static_cast<size_t>(newline - begin) : size_ - position_;
++      const size_t available = sizeof(prefix_) - prefix_size_;
++      const size_t copied = span < available ? span : available;
++      std::memcpy(prefix_ + prefix_size_, begin, copied);
++      prefix_size_ += copied;
++      position_ += span + (newline ? 1 : 0);
++      if (newline) {
++        const bool parsed = ParsePrefix(prefix_, prefix_size_, entry);
++        prefix_size_ = 0;
++        if (parsed) return true;
++      }
++    }
++  }
++
++  static bool ParsePrefix(const char* text, size_t size, LinuxMapEntry& entry) {
++    const char* cursor = text;
++    const char* end = text + size;
++    LinuxMapEntry parsed;
++    if (!Hex(cursor, end, parsed.start) || cursor == end || *cursor++ != '-' ||
++        !Hex(cursor, end, parsed.end) || cursor == end || *cursor++ != ' ') return false;
++    while (cursor != end && *cursor == ' ') ++cursor;
++    if (end - cursor < 4 || (cursor[0] != 'r' && cursor[0] != '-') ||
++        (cursor[1] != 'w' && cursor[1] != '-') ||
++        (cursor[2] != 'x' && cursor[2] != '-') ||
++        (cursor[3] != 'p' && cursor[3] != 's') || parsed.start >= parsed.end) return false;
++    for (size_t i = 0; i != 4; ++i) parsed.perms[i] = cursor[i];
++    entry = parsed;
++    return true;
++  }
++
++ private:
++  static bool Hex(const char*& cursor, const char* end, uintptr_t& value) {
++    const char* first = cursor;
++    value = 0;
++    while (cursor != end) {
++      const unsigned char c = static_cast<unsigned char>(*cursor);
++      const unsigned digit = c >= '0' && c <= '9' ? c - '0'
++                           : c >= 'a' && c <= 'f' ? c - 'a' + 10
++                           : c >= 'A' && c <= 'F' ? c - 'A' + 10 : 16;
++      if (digit == 16) break;
++      if (value > (UINTPTR_MAX - digit) / 16) return false;
++      value = value * 16 + digit;
++      ++cursor;
++    }
++    return cursor != first;
++  }
++  int fd_;
++  char buffer_[4096];
++  char prefix_[64];
++  size_t position_ = 0, size_ = 0, prefix_size_ = 0;
++};
++
++}  // namespace rex::memory::detail

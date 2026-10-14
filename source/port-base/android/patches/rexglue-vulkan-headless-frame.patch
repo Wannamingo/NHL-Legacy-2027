@@ -1,0 +1,18 @@
+diff --git a/src/graphics/vulkan/command_processor.cpp b/src/graphics/vulkan/command_processor.cpp
+--- a/src/graphics/vulkan/command_processor.cpp
++++ b/src/graphics/vulkan/command_processor.cpp
+@@ -2630,7 +2630,13 @@ void VulkanCommandProcessor::IssueSwap(uint32_t frontbuffer_ptr, uint32_t frontbuffer
+     return;
+   ui::Presenter* presenter = graphics_system_->presenter();
+   if (!presenter) {
+-    REXGPU_ERROR("XELOG_GPU PRESENT: NO PRESENTER");
++    // Offscreen trace playback still has a frame boundary. Submit the final
++    // commands and retire per-frame resources even without a display surface.
++    // Otherwise repeated frames keep allocations alive and the final commands
++    // may only reach the GPU in a later frame.
++    if (BeginSubmission(true)) {
++      EndSubmission(true);
++    }
+     return;
+   }
+ 

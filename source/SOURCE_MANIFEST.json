@@ -1,0 +1,1090 @@
+{
+  "android-final/AndroidManifest.xml": {
+    "bytes": 1699,
+    "sha256": "53464bf26e564fb198b6523a2a9b6ef8d530dfe399345baeaf328c75bf1340c5"
+  },
+  "android-final/BuildInfo.java": {
+    "bytes": 336,
+    "sha256": "faf8e8cff71bf4a7d4e3752bd3f41f415b4d11f0c4270883b0f0ac3a42dee9f8"
+  },
+  "android-final/driver_loader132.h": {
+    "bytes": 1765,
+    "sha256": "32985f545d26ee0b86d77c3113a359338e5f413f2343d38bbda68fb348cd17de"
+  },
+  "android-final/DriverStore.java": {
+    "bytes": 11907,
+    "sha256": "5b9effaae098f72f0bfd76d3cbc2115d0e33c683fcf12877ae4ad1e2b27881a8"
+  },
+  "android-final/game-identity.json": {
+    "bytes": 2203,
+    "sha256": "f78cac79bae321c45dd75ef875d503870862d410878a43f718dd9ed300c4e238"
+  },
+  "android-final/GameActivity.java": {
+    "bytes": 20906,
+    "sha256": "6d3b50c594e27454828be17212c1f4424aba16d91d06902eae32b7c4e6ae3fa0"
+  },
+  "android-final/GameDataImporter.java": {
+    "bytes": 10563,
+    "sha256": "d6ce1ade3853d1988bb230c88490e50df7bb9fc4690d0b8a89d9145f5a932c10"
+  },
+  "android-final/gpu_check150.cpp": {
+    "bytes": 11067,
+    "sha256": "33d236387287b88b3e5707b581f260297ca62c04b8e40e2f668552a5f3bd2dca"
+  },
+  "android-final/GpuDriverCheck.java": {
+    "bytes": 4277,
+    "sha256": "3659fac4a76582094312c03b2221e75b37a587ba605ec36a3bf0d4b4e7aa7b8a"
+  },
+  "android-final/GpuDriverCheckService.java": {
+    "bytes": 2848,
+    "sha256": "698c986d44ea4379687a20dcc45c6073a4b953373240851c904f26238006d5ff"
+  },
+  "android-final/GraphicsCache.java": {
+    "bytes": 3304,
+    "sha256": "30965e9a6fc16028a377c6d2a4c680782635af68da1820cd450aaf6d15ccb16c"
+  },
+  "android-final/launcher/nhl-legacy-2027.png": {
+    "bytes": 3246181,
+    "sha256": "c6b426f9d6de740e2f7d134105c311e09983751209bd0a299fdd2dc3faebc1f5"
+  },
+  "android-final/launcher/nhl-legacy.jpg": {
+    "bytes": 181147,
+    "sha256": "a8770aeb3522a23d7e4a44accfc08f24d5ecc04de0aee0f825419976202571b3"
+  },
+  "android-final/LauncherActivity.java": {
+    "bytes": 39780,
+    "sha256": "8434783a64757835e488288a736c63db6005c46578b52f519eb5af2e7b5a9839"
+  },
+  "android-final/LauncherPresentation152.java": {
+    "bytes": 14124,
+    "sha256": "81dbce8b5edb2dfa7e1014bb5f509a98e269e96fade74b343e760d7b6bf126e4"
+  },
+  "android-final/ordinary-renderer.toml": {
+    "bytes": 1073,
+    "sha256": "afe54cc818d22eef2b0614e0ba1d7490ea2a6ea84f615942db02973ecf7fb146"
+  },
+  "android-final/QualitySettings151.java": {
+    "bytes": 719,
+    "sha256": "38e9ebbb33a2fbbd19d849f91ae367bbed92b88ee4df75ffdfb0ae08baa2ac8e"
+  },
+  "android-final/res/drawable-nodpi/nhl_legacy_2027_icon.png": {
+    "bytes": 3557650,
+    "sha256": "a109f67841ee9a009a3b685ffaf3469bbc00060950eab07c750cefecc0f2099e"
+  },
+  "android-final/RosterImporter.java": {
+    "bytes": 18231,
+    "sha256": "a7da739f2a758b95dbad74822e084bdd2ce8d45367f95efb5fcbd4f2a3bec9aa"
+  },
+  "android-final/TouchPadView.java": {
+    "bytes": 11170,
+    "sha256": "5afdd2c2b9d6c6ae52f76fd1ba0ec1f6de301a56e8ce856c595ec1cd1960b415"
+  },
+  "android-final/XdvdfsIso.java": {
+    "bytes": 7946,
+    "sha256": "f23e90f38282e859e0de41c06f19c2b0e6107ed3354b23f35fad7e536b36b033"
+  },
+  "native-release-reference/arena_visibility120.h": {
+    "bytes": 1126,
+    "sha256": "a9fe4a5c9f822534f781f0ebe3504f58e9c09322ab046cf690e935d55f717374"
+  },
+  "native-release-reference/crowd_visibility.cpp": {
+    "bytes": 2180,
+    "sha256": "afd0d3839781ce83df2f07551fa1840b0fbf0a65ca4c6ed091daec70698fcef6"
+  },
+  "native-release-reference/resolution144_core.h": {
+    "bytes": 2068,
+    "sha256": "77c685b1b3305974b17c0a4464751bffb856818906583a42832aa63b0c26c71a"
+  },
+  "native-release-reference/safe_copy131.h": {
+    "bytes": 369,
+    "sha256": "5dd1b0abb25e90e71df332e8fb2493d0f68e72f30124d5d5a81941350ce77179"
+  },
+  "native-release-reference/scene144_hook.inc": {
+    "bytes": 3077,
+    "sha256": "51d65a083e4a7b1d164504673f87144fa9db6a039df8f2b4e8f487c92466b95c"
+  },
+  "native-release-reference/scene144_match.h": {
+    "bytes": 614,
+    "sha256": "9e04027344cecfecca592ccc4a183e647f9ddea0616d3c86f16c616259bfc119"
+  },
+  "native-release-reference/surface137_core.h": {
+    "bytes": 2610,
+    "sha256": "ed692605b4bc1a405891d164207cc1a9b91f34e2799849b2c66c2db974f7642f"
+  },
+  "native-release-reference/surface137_hook.inc": {
+    "bytes": 1469,
+    "sha256": "c86e94a1cc4fd555a39ed1c3c2e70e0aaf4a93a8e7c2cb89dad176098fc40485"
+  },
+  "native-release-reference/tile131_core.h": {
+    "bytes": 2670,
+    "sha256": "541fbaf4d4a7b93499bac97616a13f98e4383fe4ed3ee7c1a3f0f2b6591b50b1"
+  },
+  "native-release-reference/tile_observer131.inc": {
+    "bytes": 2967,
+    "sha256": "d85bc9093593f6e44d827f999ddf156dbd24386b47d70670a5b9a80c04ea561f"
+  },
+  "port-base/android/AndroidManifest.xml": {
+    "bytes": 1256,
+    "sha256": "a42e794f21e47dbc6b38c2fde9c5336c6ac231fb9a6e855984ec0253e834c57f"
+  },
+  "port-base/android/CMakeLists.txt": {
+    "bytes": 7154,
+    "sha256": "92a3948068016a3c4b1e1ffd6c651d79b4132184ee7e528546093a21c0213f1c"
+  },
+  "port-base/android/host-codegen/CMakeLists.txt": {
+    "bytes": 1570,
+    "sha256": "b3b85f97d7028ce93e774ec088f99e40e76b74a3fb1f922dc24e65b940eb0cc6"
+  },
+  "port-base/android/java/org/nhllegacy/port/GameActivity.java": {
+    "bytes": 10907,
+    "sha256": "03d30330f81ace09a3aa4644ae72a513857d0f6697cbdbc7978739a8232530e9"
+  },
+  "port-base/android/java/org/nhllegacy/port/LauncherActivity.java": {
+    "bytes": 8057,
+    "sha256": "b60f6f032c3cafaa8a9154d0ed414c30d3bda5e38f0dcb293148462e884455a8"
+  },
+  "port-base/android/java/org/nhllegacy/port/TouchPadView.java": {
+    "bytes": 5739,
+    "sha256": "c033ebae11766fa9192e15358d98c7fdfa075ac0ae8b608c4f9776504c76a68b"
+  },
+  "port-base/android/native/asset_float_reader.cpp": {
+    "bytes": 765,
+    "sha256": "e8bf0699b5ba0950083a7b9fd5c0c2b15619546699bb0d1a0309658f31872332"
+  },
+  "port-base/android/native/asset_float_test.cpp": {
+    "bytes": 1853,
+    "sha256": "e366e6a01ba9f876d3c2b82a047557e03df52af74776fd90916b86676d12ee22"
+  },
+  "port-base/android/native/cache_stream_test.cpp": {
+    "bytes": 1849,
+    "sha256": "a70d87fa0479509b27a458e5d0011212e5e12ea581b60cc840e1d682182bb13f"
+  },
+  "port-base/android/native/crowd_diagnostics.cpp": {
+    "bytes": 5916,
+    "sha256": "fda87f6e21fcf3d8e252516355f3c89604b770bdb1210c9f729b12bb574c8a21"
+  },
+  "port-base/android/native/crowd_visibility.cpp": {
+    "bytes": 2033,
+    "sha256": "a247a88f6ecfd4fc4a5822f0f86473559fcdea2201b93643563bfd9b3d23b6be"
+  },
+  "port-base/android/native/device_probe.cpp": {
+    "bytes": 5583,
+    "sha256": "c930e023c138e9838f2dadc6b7f7cc299300e9b3c647b65a0619fe50f2a0aaf5"
+  },
+  "port-base/android/native/fence_diagnostics.h": {
+    "bytes": 6352,
+    "sha256": "22cfe9a173fd17d529c9d5d006af904487b5f00f96a285a8e4d926262cc74e01"
+  },
+  "port-base/android/native/fence_wait.cpp": {
+    "bytes": 3545,
+    "sha256": "b3fa3d85c3fbf055304dc5ea66f114253cb288c7809dac18a39959ab272aad0b"
+  },
+  "port-base/android/native/fiber_test.cpp": {
+    "bytes": 1550,
+    "sha256": "bf5aa41cb5773e9d1aa00067a7d5d9b29ded7b926ea67e47746abc55ec6dd491"
+  },
+  "port-base/android/native/frame_diagnostics.cpp": {
+    "bytes": 7270,
+    "sha256": "3e32911464ac8ecb69fd501270c16987993da966a7215524f051e54b28d212f9"
+  },
+  "port-base/android/native/frame_diagnostics.h": {
+    "bytes": 1243,
+    "sha256": "a8497619f3d9d55275aba83b966f6883184f864406019ed1b343da807379560b"
+  },
+  "port-base/android/native/frame_diagnostics_test.cpp": {
+    "bytes": 5636,
+    "sha256": "a2d8da101857c6e31f4c9bbc309c601a0a7558a86ca069dc6bd2feec261c62a4"
+  },
+  "port-base/android/native/frame_time_hud.h": {
+    "bytes": 4798,
+    "sha256": "23aa94201fe8b812beed19f080d14a0e0c639d106fa0ed065b92d8538d5888ce"
+  },
+  "port-base/android/native/half_decode_test.cpp": {
+    "bytes": 1151,
+    "sha256": "ecde554f1567e3a762a7aefb368f6ab82b19a7dc643412184adb1da0435621ce"
+  },
+  "port-base/android/native/memory_map_test.cpp": {
+    "bytes": 4282,
+    "sha256": "a41c609450664bed232c7766ff9defa6be4a5980b90b8240e649882318339d14"
+  },
+  "port-base/android/native/nhl_app.cpp": {
+    "bytes": 9796,
+    "sha256": "23591af4e34fe95886b86ee3412b987ace4e3fdc84efab75fe5815cacd141f69"
+  },
+  "port-base/android/native/render_diagnostics.h": {
+    "bytes": 9083,
+    "sha256": "116bcb3ecc1554b7380dc68aeeae0aec0fa2e2d2063a69074684142f1caa3ffd"
+  },
+  "port-base/android/native/renderer_hooks.cpp": {
+    "bytes": 2898,
+    "sha256": "820f9940445f79a3b681df753892e2566313484d407e7b86091958d7ddbe4b5d"
+  },
+  "port-base/android/native/shader_inspect.cpp": {
+    "bytes": 1302,
+    "sha256": "0b16b4d8d561614951107eda9fe66263200f8b8b45e16ebe50f789538b4ac26a"
+  },
+  "port-base/android/native/shared_memory_test.cpp": {
+    "bytes": 2037,
+    "sha256": "affeede32ce73d74e066e5211c2a4d33129dafd84fa0e2423745135a2a2328aa"
+  },
+  "port-base/android/native/touch_controls.cpp": {
+    "bytes": 629,
+    "sha256": "dd97e6a9092aca960c11a798fae25f54674a7672dcb529690bd4de882b64af64"
+  },
+  "port-base/android/native/trace_replay.cpp": {
+    "bytes": 16150,
+    "sha256": "ac65a0db59a8d17bd7e062d987844fb895ea00c63b40984c4f1cce1a0074b3ce"
+  },
+  "port-base/android/native/vertex_upload_test.cpp": {
+    "bytes": 2268,
+    "sha256": "13c366007b425bd05f36b1a32eced64f8894d05e6a9a19a94090e1597e690008"
+  },
+  "port-base/android/native/vp6_decode_test.cpp": {
+    "bytes": 1875,
+    "sha256": "42934416c9d2ef653c86bfd4e259aee90c0a74fe4c32013495ac1155fbe2852c"
+  },
+  "port-base/android/native/vp6_decoder.cpp": {
+    "bytes": 2192,
+    "sha256": "b8a85b2457f27d721610d13ec5772127eddea730feba8ed64b05eff2590a4169"
+  },
+  "port-base/android/native/vp6_decoder.h": {
+    "bytes": 553,
+    "sha256": "843d35a8499899b20531c6811f914c8fb109c443471e8bac81a7c8bcf9bc6232"
+  },
+  "port-base/android/native/vp6_ffmpeg_config.h": {
+    "bytes": 88,
+    "sha256": "99e0859b6e39c2979603fe0641d33e794117d6aed59a05f63e930a67fa459097"
+  },
+  "port-base/android/native/vp6_hooks.cpp": {
+    "bytes": 6741,
+    "sha256": "440c83d9466c01440d57619b93a25c74244e3c7d4ff8ff222846c0fe0b7147c8"
+  },
+  "port-base/android/native/write_watch_test.cpp": {
+    "bytes": 3903,
+    "sha256": "b078a52e6e16bba95c623f3d23a3d16efb2f53981df60db9b57fbd6f9fefb12f"
+  },
+  "port-base/android/patches/rexglue-android-cache-read-position.patch": {
+    "bytes": 1515,
+    "sha256": "a381c916c3de2c17934fb89081ebe32503b3a389833cd93014dab137de922881"
+  },
+  "port-base/android/patches/rexglue-android-present-queue.patch": {
+    "bytes": 2866,
+    "sha256": "b2fc967b59ac6c8a6f9160eb95479ba796505e47db30c98650023b2a18778043"
+  },
+  "port-base/android/patches/rexglue-cache-root-compat.patch": {
+    "bytes": 1695,
+    "sha256": "37a51f1766291818241314dbdd2e227902e54206962d0d48317633edad1e7c37"
+  },
+  "port-base/android/patches/rexglue-display-overlay.patch": {
+    "bytes": 1497,
+    "sha256": "85525bcc9a9f88d52fe88bef85de2cc1567150c7400b26fd474338fa8daa95c9"
+  },
+  "port-base/android/patches/rexglue-fps-stall.patch": {
+    "bytes": 1180,
+    "sha256": "6cefe4b622ceeed37618acfef74e49506df423e786f3a16a637f3fcb985f2f95"
+  },
+  "port-base/android/patches/rexglue-frame-diagnostics.patch": {
+    "bytes": 7050,
+    "sha256": "f4c22cd3e0a6c7ad9ef98d0f2d968255e0892fe43072c16a8bccc30bdde424ac"
+  },
+  "port-base/android/patches/rexglue-frame-limit.patch": {
+    "bytes": 2289,
+    "sha256": "275a3a34a5dded5bfce737fe8249cad2ed8b556a233757e8e195c8b06740ef1f"
+  },
+  "port-base/android/patches/rexglue-frame-samples.patch": {
+    "bytes": 1449,
+    "sha256": "6f751c0b2cd0dd038237ae77e9cc5f33d128a42caf1fc5d61a020229e823e399"
+  },
+  "port-base/android/patches/rexglue-gamepad-deduplicate.patch": {
+    "bytes": 843,
+    "sha256": "1c403ca2caa3c86a028db1e645c5dfbf4f2b2619d8034bf2411b6bbb5b7e3bad"
+  },
+  "port-base/android/patches/rexglue-low-video-mode.patch": {
+    "bytes": 1256,
+    "sha256": "3e970d0e3fb3f2ec7f08f874521bae9f0e8107ba727415e91aec1d0071000180"
+  },
+  "port-base/android/patches/rexglue-nhl-vulkan-android.patch": {
+    "bytes": 38101,
+    "sha256": "af6519480ed52b8bdae36b5e00a6e5d08b64b8bf39b49e0dc0d87174f699ad5d"
+  },
+  "port-base/android/patches/rexglue-original-aspect.patch": {
+    "bytes": 1613,
+    "sha256": "b21a06906e6f4e99d2b338447bac41650a9dd620373b9015f2475bbecb594ed2"
+  },
+  "port-base/android/patches/rexglue-page-validity-refresh.patch": {
+    "bytes": 2496,
+    "sha256": "c7036d954600ca07a729c6f16e3fce7f0ec2c113cb61a53572ff377c7a2cbd85"
+  },
+  "port-base/android/patches/rexglue-proc-maps-reader.patch": {
+    "bytes": 5867,
+    "sha256": "906f0e9bb8c88d853cad71d1c0e6285e1a7b83e31c5b791c1f7b7a8bddd26e77"
+  },
+  "port-base/android/patches/rexglue-rg477m-core.patch": {
+    "bytes": 3012,
+    "sha256": "cd63852498e391f84319f3d24c6ce0fa3717b998d3bb8c3323bf4b5b9836d44c"
+  },
+  "port-base/android/patches/rexglue-vulkan-driver-cache.patch": {
+    "bytes": 33067,
+    "sha256": "65df970eedf26e44de9ee1cbc31a61e0b225d5c8e3cfbdb572521e4514a07add"
+  },
+  "port-base/android/patches/rexglue-vulkan-headless-frame.patch": {
+    "bytes": 829,
+    "sha256": "9f78e86624f52afcf19d04b18bb52b1624555d3df2b7c85a85b8d00056c00a20"
+  },
+  "port-base/android/patches/rexglue-write-watch-fast-path.patch": {
+    "bytes": 4325,
+    "sha256": "2b8d4778af26eb6ab3f020882f38c2b6028ebd6c84771572ba89fc3adc75bbf0"
+  },
+  "port-base/android/README.md": {
+    "bytes": 15437,
+    "sha256": "a54363f203be439605becd1c9d3a32e59c3c91bc3fa39bc2da5ac45ab4b51b2d"
+  },
+  "port-base/android/renderer_hooks.toml": {
+    "bytes": 333,
+    "sha256": "9a135b1cef31a487c5eddd26ac33792956e840205410bacf18deab2e614dd548"
+  },
+  "port-base/android/vp6.cmake": {
+    "bytes": 1676,
+    "sha256": "f7794ac6d394e52753ca290119420c05677bfcf92ea552bf1decf76e56bcf653"
+  },
+  "port-base/AndroidManifest.xml": {
+    "bytes": 1256,
+    "sha256": "a42e794f21e47dbc6b38c2fde9c5336c6ac231fb9a6e855984ec0253e834c57f"
+  },
+  "port-base/CMakeLists.txt": {
+    "bytes": 7154,
+    "sha256": "92a3948068016a3c4b1e1ffd6c651d79b4132184ee7e528546093a21c0213f1c"
+  },
+  "port-base/host-codegen/CMakeLists.txt": {
+    "bytes": 1570,
+    "sha256": "b3b85f97d7028ce93e774ec088f99e40e76b74a3fb1f922dc24e65b940eb0cc6"
+  },
+  "port-base/java/org/nhllegacy/port/GameActivity.java": {
+    "bytes": 10907,
+    "sha256": "03d30330f81ace09a3aa4644ae72a513857d0f6697cbdbc7978739a8232530e9"
+  },
+  "port-base/java/org/nhllegacy/port/LauncherActivity.java": {
+    "bytes": 8057,
+    "sha256": "b60f6f032c3cafaa8a9154d0ed414c30d3bda5e38f0dcb293148462e884455a8"
+  },
+  "port-base/java/org/nhllegacy/port/TouchPadView.java": {
+    "bytes": 5739,
+    "sha256": "c033ebae11766fa9192e15358d98c7fdfa075ac0ae8b608c4f9776504c76a68b"
+  },
+  "port-base/native/asset_float_reader.cpp": {
+    "bytes": 765,
+    "sha256": "e8bf0699b5ba0950083a7b9fd5c0c2b15619546699bb0d1a0309658f31872332"
+  },
+  "port-base/native/asset_float_test.cpp": {
+    "bytes": 1853,
+    "sha256": "e366e6a01ba9f876d3c2b82a047557e03df52af74776fd90916b86676d12ee22"
+  },
+  "port-base/native/cache_stream_test.cpp": {
+    "bytes": 1849,
+    "sha256": "a70d87fa0479509b27a458e5d0011212e5e12ea581b60cc840e1d682182bb13f"
+  },
+  "port-base/native/crowd_diagnostics.cpp": {
+    "bytes": 5916,
+    "sha256": "fda87f6e21fcf3d8e252516355f3c89604b770bdb1210c9f729b12bb574c8a21"
+  },
+  "port-base/native/crowd_visibility.cpp": {
+    "bytes": 2033,
+    "sha256": "a247a88f6ecfd4fc4a5822f0f86473559fcdea2201b93643563bfd9b3d23b6be"
+  },
+  "port-base/native/device_probe.cpp": {
+    "bytes": 5583,
+    "sha256": "c930e023c138e9838f2dadc6b7f7cc299300e9b3c647b65a0619fe50f2a0aaf5"
+  },
+  "port-base/native/fence_diagnostics.h": {
+    "bytes": 6352,
+    "sha256": "22cfe9a173fd17d529c9d5d006af904487b5f00f96a285a8e4d926262cc74e01"
+  },
+  "port-base/native/fence_wait.cpp": {
+    "bytes": 3545,
+    "sha256": "b3fa3d85c3fbf055304dc5ea66f114253cb288c7809dac18a39959ab272aad0b"
+  },
+  "port-base/native/fiber_test.cpp": {
+    "bytes": 1550,
+    "sha256": "bf5aa41cb5773e9d1aa00067a7d5d9b29ded7b926ea67e47746abc55ec6dd491"
+  },
+  "port-base/native/frame_diagnostics.cpp": {
+    "bytes": 7270,
+    "sha256": "3e32911464ac8ecb69fd501270c16987993da966a7215524f051e54b28d212f9"
+  },
+  "port-base/native/frame_diagnostics.h": {
+    "bytes": 1243,
+    "sha256": "a8497619f3d9d55275aba83b966f6883184f864406019ed1b343da807379560b"
+  },
+  "port-base/native/frame_diagnostics_test.cpp": {
+    "bytes": 5636,
+    "sha256": "a2d8da101857c6e31f4c9bbc309c601a0a7558a86ca069dc6bd2feec261c62a4"
+  },
+  "port-base/native/frame_time_hud.h": {
+    "bytes": 4798,
+    "sha256": "23aa94201fe8b812beed19f080d14a0e0c639d106fa0ed065b92d8538d5888ce"
+  },
+  "port-base/native/half_decode_test.cpp": {
+    "bytes": 1151,
+    "sha256": "ecde554f1567e3a762a7aefb368f6ab82b19a7dc643412184adb1da0435621ce"
+  },
+  "port-base/native/memory_map_test.cpp": {
+    "bytes": 4282,
+    "sha256": "a41c609450664bed232c7766ff9defa6be4a5980b90b8240e649882318339d14"
+  },
+  "port-base/native/nhl_app.cpp": {
+    "bytes": 9796,
+    "sha256": "23591af4e34fe95886b86ee3412b987ace4e3fdc84efab75fe5815cacd141f69"
+  },
+  "port-base/native/render_diagnostics.h": {
+    "bytes": 9083,
+    "sha256": "116bcb3ecc1554b7380dc68aeeae0aec0fa2e2d2063a69074684142f1caa3ffd"
+  },
+  "port-base/native/renderer_hooks.cpp": {
+    "bytes": 2898,
+    "sha256": "820f9940445f79a3b681df753892e2566313484d407e7b86091958d7ddbe4b5d"
+  },
+  "port-base/native/shader_inspect.cpp": {
+    "bytes": 1302,
+    "sha256": "0b16b4d8d561614951107eda9fe66263200f8b8b45e16ebe50f789538b4ac26a"
+  },
+  "port-base/native/shared_memory_test.cpp": {
+    "bytes": 2037,
+    "sha256": "affeede32ce73d74e066e5211c2a4d33129dafd84fa0e2423745135a2a2328aa"
+  },
+  "port-base/native/touch_controls.cpp": {
+    "bytes": 629,
+    "sha256": "dd97e6a9092aca960c11a798fae25f54674a7672dcb529690bd4de882b64af64"
+  },
+  "port-base/native/trace_replay.cpp": {
+    "bytes": 16150,
+    "sha256": "ac65a0db59a8d17bd7e062d987844fb895ea00c63b40984c4f1cce1a0074b3ce"
+  },
+  "port-base/native/vertex_upload_test.cpp": {
+    "bytes": 2268,
+    "sha256": "13c366007b425bd05f36b1a32eced64f8894d05e6a9a19a94090e1597e690008"
+  },
+  "port-base/native/vp6_decode_test.cpp": {
+    "bytes": 1875,
+    "sha256": "42934416c9d2ef653c86bfd4e259aee90c0a74fe4c32013495ac1155fbe2852c"
+  },
+  "port-base/native/vp6_decoder.cpp": {
+    "bytes": 2192,
+    "sha256": "b8a85b2457f27d721610d13ec5772127eddea730feba8ed64b05eff2590a4169"
+  },
+  "port-base/native/vp6_decoder.h": {
+    "bytes": 553,
+    "sha256": "843d35a8499899b20531c6811f914c8fb109c443471e8bac81a7c8bcf9bc6232"
+  },
+  "port-base/native/vp6_ffmpeg_config.h": {
+    "bytes": 88,
+    "sha256": "99e0859b6e39c2979603fe0641d33e794117d6aed59a05f63e930a67fa459097"
+  },
+  "port-base/native/vp6_hooks.cpp": {
+    "bytes": 6741,
+    "sha256": "440c83d9466c01440d57619b93a25c74244e3c7d4ff8ff222846c0fe0b7147c8"
+  },
+  "port-base/native/write_watch_test.cpp": {
+    "bytes": 3903,
+    "sha256": "b078a52e6e16bba95c623f3d23a3d16efb2f53981df60db9b57fbd6f9fefb12f"
+  },
+  "port-base/patches/rexglue-android-cache-read-position.patch": {
+    "bytes": 1515,
+    "sha256": "a381c916c3de2c17934fb89081ebe32503b3a389833cd93014dab137de922881"
+  },
+  "port-base/patches/rexglue-android-present-queue.patch": {
+    "bytes": 2866,
+    "sha256": "b2fc967b59ac6c8a6f9160eb95479ba796505e47db30c98650023b2a18778043"
+  },
+  "port-base/patches/rexglue-cache-root-compat.patch": {
+    "bytes": 1695,
+    "sha256": "37a51f1766291818241314dbdd2e227902e54206962d0d48317633edad1e7c37"
+  },
+  "port-base/patches/rexglue-display-overlay.patch": {
+    "bytes": 1497,
+    "sha256": "85525bcc9a9f88d52fe88bef85de2cc1567150c7400b26fd474338fa8daa95c9"
+  },
+  "port-base/patches/rexglue-fps-stall.patch": {
+    "bytes": 1180,
+    "sha256": "6cefe4b622ceeed37618acfef74e49506df423e786f3a16a637f3fcb985f2f95"
+  },
+  "port-base/patches/rexglue-frame-diagnostics.patch": {
+    "bytes": 7050,
+    "sha256": "f4c22cd3e0a6c7ad9ef98d0f2d968255e0892fe43072c16a8bccc30bdde424ac"
+  },
+  "port-base/patches/rexglue-frame-limit.patch": {
+    "bytes": 2289,
+    "sha256": "275a3a34a5dded5bfce737fe8249cad2ed8b556a233757e8e195c8b06740ef1f"
+  },
+  "port-base/patches/rexglue-frame-samples.patch": {
+    "bytes": 1449,
+    "sha256": "6f751c0b2cd0dd038237ae77e9cc5f33d128a42caf1fc5d61a020229e823e399"
+  },
+  "port-base/patches/rexglue-gamepad-deduplicate.patch": {
+    "bytes": 843,
+    "sha256": "1c403ca2caa3c86a028db1e645c5dfbf4f2b2619d8034bf2411b6bbb5b7e3bad"
+  },
+  "port-base/patches/rexglue-low-video-mode.patch": {
+    "bytes": 1256,
+    "sha256": "3e970d0e3fb3f2ec7f08f874521bae9f0e8107ba727415e91aec1d0071000180"
+  },
+  "port-base/patches/rexglue-nhl-vulkan-android.patch": {
+    "bytes": 38101,
+    "sha256": "af6519480ed52b8bdae36b5e00a6e5d08b64b8bf39b49e0dc0d87174f699ad5d"
+  },
+  "port-base/patches/rexglue-original-aspect.patch": {
+    "bytes": 1613,
+    "sha256": "b21a06906e6f4e99d2b338447bac41650a9dd620373b9015f2475bbecb594ed2"
+  },
+  "port-base/patches/rexglue-page-validity-refresh.patch": {
+    "bytes": 2496,
+    "sha256": "c7036d954600ca07a729c6f16e3fce7f0ec2c113cb61a53572ff377c7a2cbd85"
+  },
+  "port-base/patches/rexglue-proc-maps-reader.patch": {
+    "bytes": 5867,
+    "sha256": "906f0e9bb8c88d853cad71d1c0e6285e1a7b83e31c5b791c1f7b7a8bddd26e77"
+  },
+  "port-base/patches/rexglue-rg477m-core.patch": {
+    "bytes": 3012,
+    "sha256": "cd63852498e391f84319f3d24c6ce0fa3717b998d3bb8c3323bf4b5b9836d44c"
+  },
+  "port-base/patches/rexglue-vulkan-driver-cache.patch": {
+    "bytes": 33067,
+    "sha256": "65df970eedf26e44de9ee1cbc31a61e0b225d5c8e3cfbdb572521e4514a07add"
+  },
+  "port-base/patches/rexglue-vulkan-headless-frame.patch": {
+    "bytes": 829,
+    "sha256": "9f78e86624f52afcf19d04b18bb52b1624555d3df2b7c85a85b8d00056c00a20"
+  },
+  "port-base/patches/rexglue-write-watch-fast-path.patch": {
+    "bytes": 4325,
+    "sha256": "2b8d4778af26eb6ab3f020882f38c2b6028ebd6c84771572ba89fc3adc75bbf0"
+  },
+  "port-base/README.md": {
+    "bytes": 15437,
+    "sha256": "a54363f203be439605becd1c9d3a32e59c3c91bc3fa39bc2da5ac45ab4b51b2d"
+  },
+  "port-base/renderer_hooks.toml": {
+    "bytes": 333,
+    "sha256": "9a135b1cef31a487c5eddd26ac33792956e840205410bacf18deab2e614dd548"
+  },
+  "port-base/sdk/rexglue-codegen-bcctr-tail-fix.patch": {
+    "bytes": 2419,
+    "sha256": "b204fab2c9238a1378621a8b942a8b8d5201450859fc47b71a774bdddbd9ec87"
+  },
+  "port-base/sdk/rexglue-vp6-sharedmem-fixes.patch": {
+    "bytes": 47259,
+    "sha256": "bdc529a4493e5fb76abcd46a1df4fd1ad6a76ac02bfbdb0a0e2127d71ff4b89b"
+  },
+  "port-base/sdk/rexglue-vulkan-nhl-legacy-bd9b519.patch": {
+    "bytes": 47843,
+    "sha256": "47457aa2a837e8f86d2eee734d1bd45e6592f713174a9416351c2b153726352d"
+  },
+  "port-base/tools/_audit_png.py": {
+    "bytes": 1887,
+    "sha256": "ff3484528435526b49dfe28e0029485926460a26427eeb540e511c3c839ff281"
+  },
+  "port-base/tools/_channels.py": {
+    "bytes": 1332,
+    "sha256": "37887476b984ae654c222be21e7cdd0b261b259ab98d2801c906a903a05a4fe6"
+  },
+  "port-base/tools/_check_residency.py": {
+    "bytes": 6175,
+    "sha256": "04991310ec9f7124c5e4c86154f0727eaebf13e17e8fd13a3461ed8a934ec112"
+  },
+  "port-base/tools/_crop.py": {
+    "bytes": 1961,
+    "sha256": "d12b2d25314bbbf8fa84998433c9bd0f013d4074fe43d1d55d8f36a121facf5f"
+  },
+  "port-base/tools/_decode_opaque.py": {
+    "bytes": 1571,
+    "sha256": "6a3b80efb52a9a850391208d6a8280be35f8fbb0c4b0a0c1bed355cf850de727"
+  },
+  "port-base/tools/_decode_slot.py": {
+    "bytes": 1103,
+    "sha256": "471ddca3a29b9fc061617a093749261632312dc237e4a6d35330c23e2fcebd7e"
+  },
+  "port-base/tools/_extract_spirv.py": {
+    "bytes": 596,
+    "sha256": "8419390ee8c9a5f9545705843d7bc4a90dd8ae5e18cc7247428d6a7ac6192018"
+  },
+  "port-base/tools/_find_goalie.py": {
+    "bytes": 1572,
+    "sha256": "ac529a296bac22cf0ef1899969aba52da97f2d1d1a20a6ffbd1de8738fec683d"
+  },
+  "port-base/tools/_fingerprint_all.py": {
+    "bytes": 1344,
+    "sha256": "32214e8dcd234d89abe9d7ae057349530617e2b6ed487758907e67218cd2cf6b"
+  },
+  "port-base/tools/_goalie_state.py": {
+    "bytes": 1403,
+    "sha256": "dbae6dc1b38b2adc14c32a5e6ee660a8a3ed5f6f4cbe6bbb968a67787f9fdd96"
+  },
+  "port-base/tools/_instrument_ps.py": {
+    "bytes": 8660,
+    "sha256": "10ec1835cb6b18c73d1f6f66d78328229e5ff133c155414249e3cf47c924e630"
+  },
+  "port-base/tools/_patch_bc5flat.py": {
+    "bytes": 1133,
+    "sha256": "96ce98ac98787b8df4f1e809049924b8d8c317cac8d35c6d2d130dc53278a74f"
+  },
+  "port-base/tools/_patch_expfix.py": {
+    "bytes": 1091,
+    "sha256": "57510213efe095a694811ad84fb5d4540a54cbb2b2a7baf1cbc68d4bfd13eec1"
+  },
+  "port-base/tools/_patch_slot15.py": {
+    "bytes": 1666,
+    "sha256": "194d9bc8f189f470858e3e44c91f088de98d50b8f3fd86406743b9ccb9db5454"
+  },
+  "port-base/tools/_patch_texfill.py": {
+    "bytes": 1080,
+    "sha256": "e2c7b6c4c1244b662d05d42805b82ca4142d52e81930f938e88248b66b2d0fac"
+  },
+  "port-base/tools/_scan_player_draws.py": {
+    "bytes": 2644,
+    "sha256": "0e89bbc052bf47146a71b24a1e3381bb8b8185df4b29c3efeebda14783ab43d2"
+  },
+  "port-base/tools/_spirv_slice.py": {
+    "bytes": 2952,
+    "sha256": "4be334c97f600736953a4898814a22c4f91bc2e45e3e679f53a16e08c3dfaefd"
+  },
+  "port-base/tools/_stub_census.py": {
+    "bytes": 2287,
+    "sha256": "495628116cd2af48bef42d7379caca9f2c31b30bda97df693e835fb19e4c3a2a"
+  },
+  "port-base/tools/analyze_3d_draws.py": {
+    "bytes": 4677,
+    "sha256": "19c0afe56a3bb29d19d106b43cb5bd006c5b475d938359d7cdbf98290586b0cc"
+  },
+  "port-base/tools/analyze_crowd_records.py": {
+    "bytes": 966,
+    "sha256": "c664f76686785f49f384cafa68f5bc1f328c55ac7acde5c87e6cff6f53920faf"
+  },
+  "port-base/tools/analyze_gpu_timestamps.py": {
+    "bytes": 2026,
+    "sha256": "afcbcbcbc62cb59d0705a2c6716101a4cb9c4bb7003df911f44bad410e8f4e05"
+  },
+  "port-base/tools/analyze_gpu_trace.py": {
+    "bytes": 8348,
+    "sha256": "9e993ffe6605b5c8102409255305a873888ff1a0cf474beb7b9d821000a7bd44"
+  },
+  "port-base/tools/annotate_guest_stacks.py": {
+    "bytes": 1221,
+    "sha256": "53410b82d674773c72e5b8eeb87292f16055d5d5917ac09ea85d19428d79947d"
+  },
+  "port-base/tools/build_android.py": {
+    "bytes": 4572,
+    "sha256": "b8e96b91ec0ec48e05134bbda29867cb116add41697e4d36eb2b86a1c561ecec"
+  },
+  "port-base/tools/build_host_codegen.cmd": {
+    "bytes": 293,
+    "sha256": "39123c17dc9234084dd18a48d70259e8edd1460601275442103ea098dca42e5f"
+  },
+  "port-base/tools/cba_parse.py": {
+    "bytes": 18819,
+    "sha256": "40764c83fee7ea76a39d9035bd45735bdcea59225a0c0d1d72aa973cac5fb8c3"
+  },
+  "port-base/tools/color_fit.py": {
+    "bytes": 2274,
+    "sha256": "86107aff3f3b6d6d53aeb1960a8ec7a41b00cf8843b48a8bf61cfe24cc0e6529"
+  },
+  "port-base/tools/d3d9_label.py": {
+    "bytes": 6455,
+    "sha256": "33a881973990be5e9136cfa3959919356e608da40b9eaa4d8d5098a32fed5293"
+  },
+  "port-base/tools/d3d9_probe.py": {
+    "bytes": 3329,
+    "sha256": "5912290546b0c052cb8886e997a31815328b3c4a415df8436250e42ef212d02c"
+  },
+  "port-base/tools/decode_fb.py": {
+    "bytes": 2214,
+    "sha256": "39b583831203707b8670ff3f22e49461df61798be6f6b44334622fea490cb159"
+  },
+  "port-base/tools/device_benchmark.py": {
+    "bytes": 2736,
+    "sha256": "bada124fdba488723e175ba9d9e80e267478914295598ab5dfe4b0719e469eac"
+  },
+  "port-base/tools/device_button.py": {
+    "bytes": 1956,
+    "sha256": "dc701d66482f7c831f7f59a1735a2d52f1f49d1565061c4c7acbbfc703561d9d"
+  },
+  "port-base/tools/device_cpu_sample.py": {
+    "bytes": 2402,
+    "sha256": "56e531f957f3cdba1cb0867eade713701cea09c3fd1c8c290c614e394ee5c422"
+  },
+  "port-base/tools/device_draw_costs.py": {
+    "bytes": 3915,
+    "sha256": "520c3ca6695f599dd79f131b2d7034b7d4e298e5a75b809a5dd0f1680823a9c8"
+  },
+  "port-base/tools/device_hardware_monitor.py": {
+    "bytes": 4504,
+    "sha256": "4a05288eebc8640af73111fd975094754c1668fe33806bb53030c5e47c1dd827"
+  },
+  "port-base/tools/device_isolated_replay.py": {
+    "bytes": 1157,
+    "sha256": "4c77fb6c71b1d9a6cfbba2949946261fb60b1fc583450874b5ee315be19c5e9f"
+  },
+  "port-base/tools/device_pull_trace.py": {
+    "bytes": 1021,
+    "sha256": "3a6251138800e781373190ad990b910eb4ce68fbd9a4f843ded0f4082f79bed1"
+  },
+  "port-base/tools/device_render_settings.py": {
+    "bytes": 5993,
+    "sha256": "8b63b4b17164b8683aad6cd897e443cebc63d11585034f0ffa0c2c04abfcec90"
+  },
+  "port-base/tools/device_replay.py": {
+    "bytes": 5346,
+    "sha256": "9d9f52ecb88383f905273f9f75c6ee4540f229c598d45350c7d78772069d5337"
+  },
+  "port-base/tools/device_replay_matrix.py": {
+    "bytes": 6146,
+    "sha256": "0f32632e983b2d59e2d2a8ad7975d214a13a23c99913bbb1033161146ad37acd"
+  },
+  "port-base/tools/device_shader_cache.py": {
+    "bytes": 2168,
+    "sha256": "6686c4d9318c7c6f186993e041612f5cb17dbc6218d7659a5fdf4df051532311"
+  },
+  "port-base/tools/device_snapshot.py": {
+    "bytes": 1939,
+    "sha256": "eb3560490ee83c56a99bf5b69a4742f239799d0ec3ee8d44a515048ae4f176bf"
+  },
+  "port-base/tools/device_system_trace.py": {
+    "bytes": 1897,
+    "sha256": "f2dae2e13ba6c656e6597c73398617113f0523542752f2bc3c93e78be1350ba5"
+  },
+  "port-base/tools/device_thread_profile.py": {
+    "bytes": 3014,
+    "sha256": "b8f08b5125a0b55be672f92c3ff55a800426a518f1d488f647295dce48913e91"
+  },
+  "port-base/tools/drive.ps1": {
+    "bytes": 2052,
+    "sha256": "de23d604c4a12b0272eefd0a46dc6603f76157772facf70e4ad158ea2ccf01e9"
+  },
+  "port-base/tools/dxbc_sigs.py": {
+    "bytes": 1790,
+    "sha256": "c54515a5837cb3e8ebf3cdc664a4a04f67b570bf3de57d9e0b968a6cc769f62c"
+  },
+  "port-base/tools/enable_crash_dumps.ps1": {
+    "bytes": 3201,
+    "sha256": "f77df468d5e1cd8ec8967281fcd1e12f5b3abab0e52767f1732b1595e1e62db7"
+  },
+  "port-base/tools/fail_trees.py": {
+    "bytes": 878,
+    "sha256": "178ff217b02953fff7ba7f41c89289ede287b446729f80354ece107cc08d9c59"
+  },
+  "port-base/tools/fetch_thirdparty.ps1": {
+    "bytes": 1321,
+    "sha256": "157efac4980797156b10d66b3e1fcc86e9b310071464c0bc87edca6c4aaae2dc"
+  },
+  "port-base/tools/find_callers.py": {
+    "bytes": 1026,
+    "sha256": "aa2f62490d2eaf1692d53616a1e43a6dbd0c819c4ce48d424925146c1d3a13e1"
+  },
+  "port-base/tools/find_field100_store.py": {
+    "bytes": 2258,
+    "sha256": "9cc6758dc853014943bc1308be5fcc61bdd2cb8f96df744bdac8ad0c9164a3a4"
+  },
+  "port-base/tools/find_idct.py": {
+    "bytes": 3524,
+    "sha256": "6f8f6f840862cbcf2bd43ea43c10b82606d1d67629117fd6720c1c71296a1c0c"
+  },
+  "port-base/tools/find_missing_indirect_targets.py": {
+    "bytes": 3086,
+    "sha256": "3cbc044fe3454056116fb8987df2daf59d4f669c52131dd15ba1f12902333a9a"
+  },
+  "port-base/tools/find_missing_materialized_targets.py": {
+    "bytes": 3673,
+    "sha256": "f280b032a369f023b3d606a3a372fd6f19669a7e6ca0b276544e082b44a17dc9"
+  },
+  "port-base/tools/find_object_around_slot.py": {
+    "bytes": 2042,
+    "sha256": "4d243faae5e6ef089d46259a32d0cd7b21fdaff6783e674337d180527169f3fb"
+  },
+  "port-base/tools/find_slot_installer.py": {
+    "bytes": 2558,
+    "sha256": "d30f0c0506541b255a53e0f660e981f5ba44ed33dc8079ebe56c515757b28f49"
+  },
+  "port-base/tools/frame_dump.py": {
+    "bytes": 5206,
+    "sha256": "ea4795ac01f502d71ee2087c0ac284444e2e3ec45502e7363f96d0515bf85477"
+  },
+  "port-base/tools/franchise_re/find_franchise_code.py": {
+    "bytes": 6603,
+    "sha256": "c4af37f0f14522024642c26d4d8cc0e2ccfaa2a47c2960b33b45ccf255146088"
+  },
+  "port-base/tools/generate_android.py": {
+    "bytes": 1248,
+    "sha256": "c7260ae5f43c414f9a189c5119b4cf4a6d7d0ff5890f217349f31046a70340d2"
+  },
+  "port-base/tools/highcut_packet_decode.py": {
+    "bytes": 21188,
+    "sha256": "cb7251b79d299ca972de70399e8b44b17ca60035e96e34aeebf6ac51674a1156"
+  },
+  "port-base/tools/inspect_guest_function.py": {
+    "bytes": 1344,
+    "sha256": "e4a9a8dbe5713ffa412fc03056942ac17598f044b7952e8ff31f8a5f39cd78e7"
+  },
+  "port-base/tools/map_slot_pages.py": {
+    "bytes": 2730,
+    "sha256": "fb04d429bed5c3d59c1f14a08d8403912bcbfb6108365a72dce2615454582627"
+  },
+  "port-base/tools/materialized_targets.toml": {
+    "bytes": 6350,
+    "sha256": "b1080afa9a9557faeca68d85dcdcd22c9b9a6d0c60d636ead14a8f4fe01c6fdb"
+  },
+  "port-base/tools/missing_targets.toml": {
+    "bytes": 18093,
+    "sha256": "3f91687bed47dc2d9a4d2be536f324aa9b1bebe6a30effab8f297aae38413bcd"
+  },
+  "port-base/tools/package_apk.py": {
+    "bytes": 5134,
+    "sha256": "0924b90e629db78a09e99227afedd5e83f34705fdc849dba53d6d42d84e365d0"
+  },
+  "port-base/tools/packager/CMakeLists.txt": {
+    "bytes": 2492,
+    "sha256": "cda5918de9733fcbd4eac94e6638bbe5c4725b6e4b842da12c3ea74c05e80edb"
+  },
+  "port-base/tools/packager/manifest.toml.in": {
+    "bytes": 457,
+    "sha256": "0683ec775243e491d5fddef26189f11218dfb3e4712b0783e1507a13c4d767ab"
+  },
+  "port-base/tools/packager/src/cli.cpp": {
+    "bytes": 5160,
+    "sha256": "1db09985b485741d8151cc1624bbe116a858782e43fd967d711292126f6affde"
+  },
+  "port-base/tools/packager/src/cli.h": {
+    "bytes": 1478,
+    "sha256": "5998be25f949fb46138f6ecc883271d5a39bda2df6f76c7fcd6dfd2448787891"
+  },
+  "port-base/tools/packager/src/errors.cpp": {
+    "bytes": 2237,
+    "sha256": "5cb420172947b06c2f7cbb95b143489ec74183bb34b14e3c6bd4fdecdd1948e5"
+  },
+  "port-base/tools/packager/src/errors.h": {
+    "bytes": 1112,
+    "sha256": "751faf7bf379c4da3aaaa45c2ed33c07c2274ff7ab8b8af0d917132c32253457"
+  },
+  "port-base/tools/packager/src/folder_source.cpp": {
+    "bytes": 4959,
+    "sha256": "0b912e64219fab98b29e2322ba8c8b88ff9d77a0c8fbd1102a51292e35322aab"
+  },
+  "port-base/tools/packager/src/folder_source.h": {
+    "bytes": 846,
+    "sha256": "11dcad3633825d5d4f971bd25d58bc3b7e95de05188ca17ad9c796ccfcaa6777"
+  },
+  "port-base/tools/packager/src/game_source.h": {
+    "bytes": 1473,
+    "sha256": "d79e032e08c9a2bd445a6299e99859a77195bb8f1bec3464a1f8c39c3bccf1f5"
+  },
+  "port-base/tools/packager/src/installer.cpp": {
+    "bytes": 9516,
+    "sha256": "cf0a5fbef32ff43c70d1a1d8cb1709ac93816155aeea28437d6591fe755dd0e5"
+  },
+  "port-base/tools/packager/src/installer.h": {
+    "bytes": 773,
+    "sha256": "f72f214fb06437312495f8ef1b0a4a0bafa12f17e33918092a342fef146c1fe9"
+  },
+  "port-base/tools/packager/src/iso_source.cpp": {
+    "bytes": 5037,
+    "sha256": "992fedb9576e915f9d3e235f50ff6891917686369e99a541f2a841f43b7ad658"
+  },
+  "port-base/tools/packager/src/iso_source.h": {
+    "bytes": 1348,
+    "sha256": "fed68e3965dc58c2afcd62ebc8c5f106b8fd3539b70c5ef67fa04c418c4f75cd"
+  },
+  "port-base/tools/packager/src/main.cpp": {
+    "bytes": 4216,
+    "sha256": "2ba70b561d24d445381ff49f7762aa06ccf35a830d77df96087625e8917a9a6c"
+  },
+  "port-base/tools/packager/src/manifest.cpp": {
+    "bytes": 2671,
+    "sha256": "29ec632d99ff35e9303b0ff64869bebda0832f0c2c77775c3d17cc5a4a74744b"
+  },
+  "port-base/tools/packager/src/manifest.h": {
+    "bytes": 1095,
+    "sha256": "a52688ecdd1bb6b24e75fae9e56f15678ece72c6a98910db59864ca852f9795d"
+  },
+  "port-base/tools/parity_diff.py": {
+    "bytes": 1243,
+    "sha256": "1f6726e9ea7606b4c2a7dd7eb9cd3ad2e3f6d1063f9cd28f7c961b65be81836c"
+  },
+  "port-base/tools/parse_gpu_trace.py": {
+    "bytes": 3533,
+    "sha256": "545e559856d35e57e6e609fb8b434fbc5979c9bb05720f1e7d3ca1386cc254ba"
+  },
+  "port-base/tools/parse_minidump.py": {
+    "bytes": 7943,
+    "sha256": "04c6db1cdfb61416feb95f8d98573872aaea9912ec59763769fee3368432f8ee"
+  },
+  "port-base/tools/prepare_android_sdk.py": {
+    "bytes": 5294,
+    "sha256": "ee34e74cc3f0d9740508923de46785eeb6ec5c5bd1018b0770e84d0040e15eec"
+  },
+  "port-base/tools/prepare_game.py": {
+    "bytes": 2626,
+    "sha256": "57419cc2efce3185d8006dc5b72c73c273dc317b618482803d88c06c73a4429f"
+  },
+  "port-base/tools/profile_funcs.py": {
+    "bytes": 1644,
+    "sha256": "4ed6bba54dd8202e7e370154b239ada8b1ef4a53c149a61922f21af31069c566"
+  },
+  "port-base/tools/rank_arith.py": {
+    "bytes": 1513,
+    "sha256": "43d0f70596c2c94fee3821c3843e0fc0ae631db732e9f3d8e87befbf98458a2d"
+  },
+  "port-base/tools/rdc_bg.py": {
+    "bytes": 2913,
+    "sha256": "02890f3d3a26817c49af0650ce0f0f4904378fad84a30151ce0d516d0723a929"
+  },
+  "port-base/tools/rdc_graph.py": {
+    "bytes": 2343,
+    "sha256": "9ee2efa88056a67aa6d1c0d53511e4a26f1c683434fd424a73c19b51c9005d25"
+  },
+  "port-base/tools/rdc_inspect.py": {
+    "bytes": 3214,
+    "sha256": "0a075b647f23882fbeed4128dc48c8964f6a3fb43b950e27f2ff0c00af916bd7"
+  },
+  "port-base/tools/rdc_oracle.py": {
+    "bytes": 3005,
+    "sha256": "ecdb87866e3b24c61a47af12ac9d29522bfaa2240092955ea03c5bac934a48e1"
+  },
+  "port-base/tools/rdc_pick.py": {
+    "bytes": 2279,
+    "sha256": "ab2928fbc428309ee3397ab23887bbbc96ae758525e56c1add30fb101f1be615"
+  },
+  "port-base/tools/rdc_postvs.py": {
+    "bytes": 2800,
+    "sha256": "6ac43961d8933f1310d0948d6ab4ef7d525027ed66c3d688b0e750c0a34badc5"
+  },
+  "port-base/tools/rdc_rt.py": {
+    "bytes": 2621,
+    "sha256": "13e448e075d8ec6eb1f7fa5d141ddc94c09c2d20986ef40f527ea03c16c768a2"
+  },
+  "port-base/tools/rdc_textures.py": {
+    "bytes": 2131,
+    "sha256": "c3644fd32f04ba74d5bb5e2df59018299b913eb8bc3ae986b0be23196d78dc87"
+  },
+  "port-base/tools/replay/CMakeLists.txt": {
+    "bytes": 2029,
+    "sha256": "91f851d334e897acc7d40f5244bd8c92b661a577fb0216bc839f9e932b4672bc"
+  },
+  "port-base/tools/replay/src/image_dump.cpp": {
+    "bytes": 3383,
+    "sha256": "680414c6474fd78e5847055430642aa3739e2864933f657a392dc487435f7297"
+  },
+  "port-base/tools/replay/src/image_dump.h": {
+    "bytes": 450,
+    "sha256": "5b9dfbb218d6b46ce865b9a39559553a5b03ca77cd489a537fe3704f1db1d6e0"
+  },
+  "port-base/tools/replay/src/trace_replay.cpp": {
+    "bytes": 10840,
+    "sha256": "03760d69d9d7b6659cba70750d8bf9ed8a28ad0f50cec35080b6dcff4479ba58"
+  },
+  "port-base/tools/replay/src/xtr_player.cpp": {
+    "bytes": 17768,
+    "sha256": "3fa3933461323e53d0b7a1d6463fecb010337799e67718cf5968fe963fa4f612"
+  },
+  "port-base/tools/replay/src/xtr_player.h": {
+    "bytes": 2658,
+    "sha256": "a5a980066d6ee3b22085881c5a1ae0c0519ad05ea4ddf0e375174756463f2dfc"
+  },
+  "port-base/tools/smoke_boot.ps1": {
+    "bytes": 1641,
+    "sha256": "fa4105220132fec51658a17d6e374c26277edf3be893e1c2c9cd5a19eea7dc71"
+  },
+  "port-base/tools/stage_game.py": {
+    "bytes": 3441,
+    "sha256": "e4853bec33ea05565e4399512981434c197fc3b84007f80f3c9fa30dab38b6e4"
+  },
+  "port-base/tools/stick_widen/Cargo.lock": {
+    "bytes": 2507,
+    "sha256": "74f0f4c9ef18a51cd6e52e44bf6719973f318410e21a72e8088651e8f915e14d"
+  },
+  "port-base/tools/stick_widen/Cargo.toml": {
+    "bytes": 692,
+    "sha256": "262227949bfb457e1ff8ea539334e5c4c07be5d1ec578bc340cac6daa2f70e40"
+  },
+  "port-base/tools/stick_widen/restore.ps1": {
+    "bytes": 1035,
+    "sha256": "d3c3b7671ca08ad4ac77d7d6a3b72042e7e7c5841d9ac6cef5477a3d8251ff6a"
+  },
+  "port-base/tools/stick_widen/src/main.rs": {
+    "bytes": 17947,
+    "sha256": "dcf804179fd7b9482eff9335b1902c645df91172d867cae2ec3985e368ca5d70"
+  },
+  "port-base/tools/tiling_probe.py": {
+    "bytes": 8435,
+    "sha256": "42f597e972b6de4eca07f47c9f335613f730997d7f90024c69366ff5936ccac2"
+  },
+  "port-base/tools/trace_frame_diff.py": {
+    "bytes": 3355,
+    "sha256": "15fb7fc526ca13f10a32a46a032d5afa95e6555041dd0201504e1df18ff62193"
+  },
+  "port-base/tools/trace_mem_inventory.py": {
+    "bytes": 2860,
+    "sha256": "f977846a31e8163e0a6900f6be9d5e6d2c789971223e0b05ee43428ffba49af0"
+  },
+  "port-base/tools/trace_reg_inspect.py": {
+    "bytes": 3531,
+    "sha256": "ebb9be06805d573c7db145b4b011164e70cbdd144763b60f9050be43f71d5912"
+  },
+  "port-base/tools/trace_resolve_analysis.py": {
+    "bytes": 4563,
+    "sha256": "32d7cd05abf9458a0aaa98e34bf6fd2fb3039f50d618d4aae2caa41a9da58a9f"
+  },
+  "port-base/tools/trace_swap_analysis.py": {
+    "bytes": 2451,
+    "sha256": "d3af6030206730fde449c0d86497f369ccadbc1570914a815f859d9db480a003"
+  },
+  "port-base/tools/tunables/build_schema.py": {
+    "bytes": 7052,
+    "sha256": "828b4441f258c8fe3a069623b2c6593383c28fbe72a98d2e2dcbd5b88d4ec698"
+  },
+  "port-base/tools/tunables/emit_runtime.py": {
+    "bytes": 1864,
+    "sha256": "403a140adfcfd6c0ce29734eb35b4172586a217f68613ea4222b7a897c6f38f5"
+  },
+  "port-base/tools/tunables/merge_refined.py": {
+    "bytes": 3016,
+    "sha256": "9ec252eb221a824e996ff7314010b0cd4059bfc5382c926a473f076eb54f7b26"
+  },
+  "port-base/tools/tunables/prep_chunks.py": {
+    "bytes": 1978,
+    "sha256": "cf86d11a1e58603416571088112922b1fd9374ebd733351e711b261a9733e39e"
+  },
+  "port-base/tools/vp6-converter/.gitignore": {
+    "bytes": 71,
+    "sha256": "de6c51d27986e5312966bdf4d3509410b73a0ffdedf7ba961d04a3ed11b6b62c"
+  },
+  "port-base/tools/vp6-converter/Cargo.lock": {
+    "bytes": 158,
+    "sha256": "8c4915c4db93eecee111b57b7d5194c2ff4677a2f6ba1e07976afca1c041d468"
+  },
+  "port-base/tools/vp6-converter/Cargo.toml": {
+    "bytes": 380,
+    "sha256": "c594c909a2915c614a2ec2adcc3c35218fbcd0cdd9ee818d1bdd94c24e691add"
+  },
+  "port-base/tools/vp6-converter/README.md": {
+    "bytes": 3967,
+    "sha256": "fb2b00cb2364c813bee3aaa18298f0926b0125031d9dc6b6cebbc9638d7ddaa5"
+  },
+  "port-base/tools/vp6-converter/src/main.rs": {
+    "bytes": 15640,
+    "sha256": "44edb61feb790aead6a321348dafde54675f1f500f65fac5f5477fe3c1bcdd06"
+  },
+  "port-base/vp6.cmake": {
+    "bytes": 1676,
+    "sha256": "f7794ac6d394e52753ca290119420c05677bfcf92ea552bf1decf76e56bcf653"
+  },
+  "README.md": {
+    "bytes": 1497,
+    "sha256": "6baba1116365767bf0c982c78ab36a584f70c072e7c57fada7bc3d8319e7316b"
+  },
+  "tests/IsoImporterProbe.java": {
+    "bytes": 4731,
+    "sha256": "ad60e4fb2657e4eb8eda847f28166906bcb92b8443b75e533dbcb2c3340cac7a"
+  },
+  "tests/IsoReaderProbe.java": {
+    "bytes": 2032,
+    "sha256": "77badd72facd4ca3df960a013198283a79d7f4f60bd78957ed0224a1f2e139d3"
+  }
+}

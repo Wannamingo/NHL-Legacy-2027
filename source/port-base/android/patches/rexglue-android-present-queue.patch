@@ -1,0 +1,53 @@
+--- a/src/ui/vulkan/vulkan_device.cpp
++++ b/src/ui/vulkan/vulkan_device.cpp
+@@ -525,6 +525,15 @@
+ 
+   device->queue_families_[device->queue_family_graphics_compute_].queues.resize(std::max(
+       size_t(1), device->queue_families_[device->queue_family_graphics_compute_].queues.size()));
++#if REX_PLATFORM_ANDROID
++  // Reserve a second queue in the SAME family for opt-in WSI isolation. The
++  // existing paint signal / present wait semaphore orders access to images;
++  // no cross-family ownership transfer or guest submission change is needed.
++  if (with_swapchain &&
++      queue_families[device->queue_family_graphics_compute_].queueCount >= 2) {
++    device->queue_families_[device->queue_family_graphics_compute_].queues.resize(2);
++  }
++#endif
+   if (device->queue_family_sparse_binding_ != UINT32_MAX) {
+     device->queue_families_[device->queue_family_sparse_binding_].queues.resize(std::max(
+         size_t(1), device->queue_families_[device->queue_family_sparse_binding_].queues.size()));
+--- a/src/ui/vulkan/vulkan_presenter.cpp
++++ b/src/ui/vulkan/vulkan_presenter.cpp
+@@ -70,6 +70,10 @@
+ 
+ REXCVAR_DEFINE_BOOL(vulkan_allow_present_mode_fifo_relaxed, true, "UI/Vulkan",
+                     "Allow FIFO relaxed present mode");
++
++REXCVAR_DEFINE_BOOL(vulkan_separate_present_queue, false, "UI/Vulkan",
++                    "Use a second queue in the same graphics family for Android presentation")
++    .lifecycle(rex::cvar::Lifecycle::kHotReload);
+ 
+ REXCVAR_DEFINE_BOOL(vulkan_present_timing_log, false, "UI/Vulkan",
+                     "Log averaged Vulkan host presentation timing")
+@@ -2634,8 +2638,20 @@
+   {
+     const VulkanDevice::Queue::Acquisition queue_acquisition =
+         [&] {
++          uint32_t queue_index = 0;
++#if REX_PLATFORM_ANDROID
++          if (REXCVAR_GET(vulkan_separate_present_queue) &&
++              paint_context_.present_queue_family == vulkan_device_->queue_family_graphics_compute() &&
++              vulkan_device_->queue_families()[paint_context_.present_queue_family].queues.size() >= 2) {
++            queue_index = 1;
++          }
++          static std::atomic<uint32_t> logged_queue{UINT32_MAX};
++          if (logged_queue.exchange(queue_index, std::memory_order_relaxed) != queue_index)
++            REXLOG_INFO("VulkanPresenter: present queue index {} (graphics family {})",
++                        queue_index, paint_context_.present_queue_family);
++#endif
+           diagnostics::WaitTimer queue_timer(diagnostics::Wait::kQueueLock);
+-          return vulkan_device_->AcquireQueue(paint_context_.present_queue_family, 0);
++          return vulkan_device_->AcquireQueue(paint_context_.present_queue_family, queue_index);
+         }();
+     diagnostics::WaitTimer present_timer(diagnostics::Wait::kPresentCall);
+     present_result = dfn.vkQueuePresentKHR(queue_acquisition.queue(), &present_info);

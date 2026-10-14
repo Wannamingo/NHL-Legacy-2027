@@ -1,0 +1,14 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.nhllegacy.port" android:versionCode="12" android:versionName="1.0.0-final-20261013">
+  <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="35" />
+  <uses-feature android:name="android.hardware.vulkan.level" android:version="1" android:required="true" />
+  <uses-feature android:name="android.hardware.vulkan.version" android:version="0x00402000" android:required="true" />
+  <uses-feature android:name="android.hardware.gamepad" android:required="false" />
+  <uses-permission android:name="android.permission.VIBRATE" />
+  <application android:label="NHL Legacy 2027" android:icon="@drawable/nhl_legacy_2027_icon" android:appCategory="game" android:theme="@android:style/Theme.Material.NoActionBar" android:allowBackup="false" android:extractNativeLibs="true" android:debuggable="false">
+    <activity android:name=".LauncherActivity" android:exported="true" android:launchMode="singleTask" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|density|fontScale">
+      <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
+    </activity>
+    <activity android:name=".GameActivity" android:exported="false" android:screenOrientation="sensorLandscape" android:process=":game" android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|density|fontScale" />
+    <service android:name=".GpuDriverCheckService" android:exported="false" android:process=":drivercheck" />
+  </application>
+</manifest>

@@ -1,0 +1,33 @@
+--- a/include/rex/ui/presenter.h
++++ b/include/rex/ui/presenter.h
+@@ -370,6 +370,8 @@
+     uint64_t frame_count = 0;
+   };
+   GuestFrameStats GetGuestFrameStats() const;
++  // Chronological guest output times, for optional frame pacing diagnostics.
++  std::vector<uint64_t> GetGuestFrameTimestampsMicroseconds() const;
+   bool GuestFrameStatsEnabled() const {
+     return guest_frame_stats_enabled_.load(std::memory_order_relaxed);
+   }
+--- a/src/ui/presenter.cpp
++++ b/src/ui/presenter.cpp
+@@ -779,6 +779,19 @@
+   guest_frame_gpu_resolve_us_.store(0, std::memory_order_relaxed);
+   guest_frame_gpu_dump_us_.store(0, std::memory_order_relaxed);
+   guest_frame_stats_enabled_.store(true, std::memory_order_relaxed);
++}
++
++std::vector<uint64_t> Presenter::GetGuestFrameTimestampsMicroseconds() const {
++  std::lock_guard<std::mutex> stats_lock(guest_frame_stats_mutex_);
++  std::vector<uint64_t> times;
++  times.reserve(guest_frame_timestamp_count_);
++  for (size_t i = 0; i < guest_frame_timestamp_count_; ++i) {
++    size_t index = (guest_frame_timestamp_next_ + kGuestFrameTimestampCount -
++                    guest_frame_timestamp_count_ + i) % kGuestFrameTimestampCount;
++    times.push_back(std::chrono::duration_cast<std::chrono::microseconds>(
++        guest_frame_timestamps_[index].time_since_epoch()).count());
++  }
++  return times;
+ }
+ 
+ Presenter::GuestFrameStats Presenter::GetGuestFrameStats() const {

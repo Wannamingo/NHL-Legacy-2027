@@ -1,0 +1,37 @@
+diff --git a/src/kernel/xboxkrnl/xboxkrnl_video.cpp b/src/kernel/xboxkrnl/xboxkrnl_video.cpp
+--- a/src/kernel/xboxkrnl/xboxkrnl_video.cpp
++++ b/src/kernel/xboxkrnl/xboxkrnl_video.cpp
+@@ -63,7 +63,7 @@ uint32_t GetConfiguredVideoModeWidth() {
+       }
+     }
+   }
+-  return uint32_t(std::clamp(configured_width, 640, 0x0FFF));
++  return uint32_t(std::clamp(configured_width, 64, 0x0FFF));
+ }
+ 
+ uint32_t GetConfiguredVideoModeHeight() {
+@@ -80,7 +80,7 @@ uint32_t GetConfiguredVideoModeHeight() {
+       }
+     }
+   }
+-  return uint32_t(std::clamp(configured_height, 480, 0x0FFF));
++  return uint32_t(std::clamp(configured_height, 64, 0x0FFF));
+ }
+ 
+ float GetConfiguredVideoModeRefreshRate() {
+diff --git a/src/ui/window.cpp b/src/ui/window.cpp
+--- a/src/ui/window.cpp
++++ b/src/ui/window.cpp
+@@ -44,10 +44,10 @@
+ 
+ REXCVAR_DEFINE_INT32(video_mode_width, 1280, "GPU", "Guest video mode width in pixels")
+-    .range(640, 0x0FFF)
++    .range(64, 0x0FFF)
+     .lifecycle(rex::cvar::Lifecycle::kRequiresRestart);
+ 
+ REXCVAR_DEFINE_INT32(video_mode_height, 720, "GPU", "Guest video mode height in pixels")
+-    .range(480, 0x0FFF)
++    .range(64, 0x0FFF)
+     .lifecycle(rex::cvar::Lifecycle::kRequiresRestart);
+ 
+ REXCVAR_DEFINE_STRING(resolution, "", "GPU",

@@ -1,0 +1,661 @@
+diff --git a/src/graphics/vulkan/pipeline_cache.cpp b/src/graphics/vulkan/pipeline_cache.cpp
+--- a/src/graphics/vulkan/pipeline_cache.cpp
++++ b/src/graphics/vulkan/pipeline_cache.cpp
+@@ -42,6 +42,7 @@
+ #include <rex/graphics/util/draw.h>
+ #include <rex/graphics/vulkan/command_processor.h>
+ #include <rex/graphics/vulkan/pipeline_cache.h>
++#include <rex/graphics/vulkan/shader_startup_progress.h>
+ #include <rex/graphics/vulkan/shader.h>
+ #include <rex/graphics/xenos.h>
+ #include <rex/hash.h>
+@@ -391,7 +392,9 @@
+ 
+ void VulkanPipelineCache::InitializeShaderStorage(const std::filesystem::path& cache_root,
+                                                   uint32_t title_id, bool blocking) {
++  ShaderStartupProgress progress;
+   ShutdownShaderStorage();
++  command_processor_.InitializeDriverPipelineCache(cache_root / "shaders" / "device", title_id);
+   {
+     std::lock_guard<std::mutex> lock(creation_request_lock_);
+     startup_loading_ = false;
+@@ -638,6 +641,7 @@
+     pipeline_creations.push_back(creation_arguments);
+   }
+ 
++  progress.SetTotal(pipeline_creations.size());
+   if (!pipeline_creations.empty()) {
+     {
+       std::lock_guard<std::mutex> lock(creation_request_lock_);
+@@ -666,7 +670,7 @@
+ 
+     std::atomic<size_t> next_creation_index(0);
+     std::atomic<size_t> created_pipeline_count(0);
+-    auto creation_worker = [this, &pipeline_creations, &next_creation_index,
++    auto creation_worker = [this, &pipeline_creations, &next_creation_index, &progress,
+                             &created_pipeline_count]() {
+       while (true) {
+         size_t creation_index = next_creation_index.fetch_add(1);
+@@ -676,6 +680,7 @@
+         if (EnsurePipelineCreated(pipeline_creations[creation_index])) {
+           created_pipeline_count.fetch_add(1);
+         }
++        progress.Advance();
+       }
+     };
+ 
+@@ -723,6 +728,7 @@
+   shader_storage_title_id_ = title_id;
+ 
+   // Start the storage writing thread.
++  command_processor_.SaveDriverPipelineCache();
+   storage_write_flush_shaders_ = false;
+   storage_write_flush_pipelines_ = false;
+   storage_write_thread_shutdown_ = false;
+@@ -3501,11 +3507,8 @@
+   pipeline_create_info.basePipelineHandle = VK_NULL_HANDLE;
+   pipeline_create_info.basePipelineIndex = -1;
+ 
+-  const ui::vulkan::VulkanDevice::Functions& dfn = vulkan_device->functions();
+-  const VkDevice device = vulkan_device->device();
+   VkPipeline pipeline;
+-  VkResult create_result = dfn.vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1,
+-                                                         &pipeline_create_info, nullptr, &pipeline);
++  VkResult create_result = command_processor_.CreateCachedGraphicsPipeline(pipeline_create_info, pipeline);
+   if (create_result != VK_SUCCESS) {
+     uint64_t ps_hash = creation_arguments.pixel_shader
+                            ? creation_arguments.pixel_shader->shader().ucode_data_hash()
+diff --git a/include/rex/graphics/vulkan/command_processor.h b/include/rex/graphics/vulkan/command_processor.h
+--- a/include/rex/graphics/vulkan/command_processor.h
++++ b/include/rex/graphics/vulkan/command_processor.h
+@@ -51,6 +51,8 @@
+ }
+ 
+ namespace rex::graphics::vulkan {
++
++class DriverPipelineCache;
+ 
+ class VulkanCommandProcessor : public CommandProcessor {
+  public:
+@@ -141,6 +143,14 @@
+   void InvalidateGpuMemory() override;
+   void InitializeShaderStorage(const std::filesystem::path& cache_root, uint32_t title_id,
+                                bool blocking) override;
++  void InitializeDriverPipelineCache(const std::filesystem::path& root, uint32_t title_id);
++  void SaveDriverPipelineCache();
++  VkResult CreateCachedGraphicsPipeline(const VkGraphicsPipelineCreateInfo& info, VkPipeline& out);
++  VkPipeline CreateCachedComputePipeline(VkPipelineLayout layout, VkShaderModule shader,
++      const VkSpecializationInfo* specialization = nullptr, const char* entry_point = "main");
++  VkPipeline CreateCachedComputePipeline(VkPipelineLayout layout, const uint32_t* shader_code,
++      size_t size_bytes, const VkSpecializationInfo* specialization = nullptr,
++      const char* entry_point = "main");
+ 
+   void TracePlaybackWroteMemory(uint32_t base_ptr, uint32_t length) override;
+ 
+@@ -711,6 +721,7 @@
+   std::unique_ptr<VulkanRenderTargetCache> render_target_cache_;
+ 
+   std::unique_ptr<VulkanPipelineCache> pipeline_cache_;
++  std::unique_ptr<DriverPipelineCache> driver_pipeline_cache_;
+ 
+   std::unique_ptr<VulkanTextureCache> texture_cache_;
+ 
+diff --git a/src/graphics/vulkan/command_processor.cpp b/src/graphics/vulkan/command_processor.cpp
+--- a/src/graphics/vulkan/command_processor.cpp
++++ b/src/graphics/vulkan/command_processor.cpp
+@@ -50,6 +50,7 @@
+ #include <rex/graphics/pipeline/shader/spirv_translator.h>
+ #include <rex/graphics/registers.h>
+ #include <rex/graphics/vulkan/command_processor.h>
++#include <rex/graphics/vulkan/driver_pipeline_cache.h>
+ #include <rex/graphics/vulkan/pipeline_cache.h>
+ #include <rex/graphics/vulkan/render_target_cache.h>
+ #include <rex/graphics/vulkan/shader.h>
+@@ -72,6 +73,13 @@
+ REXCVAR_DEFINE_BOOL(vulkan_readback_resolve, false, "GPU/Vulkan",
+                     "Read render-to-texture results on the CPU")
+     .lifecycle(rex::cvar::Lifecycle::kHotReload);
++
++REXCVAR_DEFINE_STRING(vulkan_driver_pipeline_cache_root, "", "GPU/Vulkan",
++                      "Optional early driver cache directory for built-in and guest shaders")
++    .lifecycle(rex::cvar::Lifecycle::kInitOnly);
++REXCVAR_DEFINE_INT32(vulkan_driver_pipeline_cache_title, 0, "GPU/Vulkan",
++                     "Title namespace for the early driver cache")
++    .lifecycle(rex::cvar::Lifecycle::kInitOnly);
+ 
+ REXCVAR_DEFINE_BOOL(vulkan_readback_memexport, false, "GPU/Vulkan",
+                     "Read data written by memory export in shaders on the CPU")
+@@ -900,6 +908,54 @@
+   }
+ }
+ 
++void VulkanCommandProcessor::InitializeDriverPipelineCache(const std::filesystem::path& root,
++                                                           uint32_t title_id) {
++  // A cache belongs to this Vulkan device and remains valid throughout shader
++  // storage reloads. Built-in pipelines must use it before guest preloading.
++  if (driver_pipeline_cache_ || root.empty()) return;
++  driver_pipeline_cache_ = std::make_unique<DriverPipelineCache>(*GetVulkanDevice(), root, title_id);
++  driver_pipeline_cache_->StartSaving();
++}
++
++void VulkanCommandProcessor::SaveDriverPipelineCache() {
++  if (driver_pipeline_cache_) driver_pipeline_cache_->StartSaving();
++}
++
++VkResult VulkanCommandProcessor::CreateCachedGraphicsPipeline(
++    const VkGraphicsPipelineCreateInfo& info, VkPipeline& out) {
++  if (driver_pipeline_cache_) return driver_pipeline_cache_->Create(info, out);
++  return GetVulkanDevice()->functions().vkCreateGraphicsPipelines(
++      GetVulkanDevice()->device(), VK_NULL_HANDLE, 1, &info, nullptr, &out);
++}
++
++VkPipeline VulkanCommandProcessor::CreateCachedComputePipeline(VkPipelineLayout layout,
++    VkShaderModule shader, const VkSpecializationInfo* specialization, const char* entry_point) {
++  VkComputePipelineCreateInfo info{VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO};
++  info.stage.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
++  info.stage.stage = VK_SHADER_STAGE_COMPUTE_BIT;
++  info.stage.module = shader;
++  info.stage.pName = entry_point;
++  info.stage.pSpecializationInfo = specialization;
++  info.layout = layout;
++  info.basePipelineIndex = -1;
++  VkPipeline out = VK_NULL_HANDLE;
++  const auto result = driver_pipeline_cache_ ? driver_pipeline_cache_->Create(info, out)
++      : GetVulkanDevice()->functions().vkCreateComputePipelines(
++          GetVulkanDevice()->device(), VK_NULL_HANDLE, 1, &info, nullptr, &out);
++  return result == VK_SUCCESS ? out : VK_NULL_HANDLE;
++}
++
++VkPipeline VulkanCommandProcessor::CreateCachedComputePipeline(VkPipelineLayout layout,
++    const uint32_t* shader_code, size_t size_bytes,
++    const VkSpecializationInfo* specialization, const char* entry_point) {
++  const VkShaderModule shader = ui::vulkan::util::CreateShaderModule(
++      GetVulkanDevice(), shader_code, size_bytes);
++  if (shader == VK_NULL_HANDLE) return VK_NULL_HANDLE;
++  const VkPipeline out = CreateCachedComputePipeline(layout, shader, specialization, entry_point);
++  GetVulkanDevice()->functions().vkDestroyShaderModule(GetVulkanDevice()->device(), shader, nullptr);
++  return out;
++}
++
+ void VulkanCommandProcessor::InitializeShaderStorage(const std::filesystem::path& cache_root,
+                                                      uint32_t title_id, bool blocking) {
+   CommandProcessor::InitializeShaderStorage(cache_root, title_id, blocking);
+@@ -1095,6 +1151,12 @@
+   const ui::vulkan::VulkanDevice::Functions& dfn = vulkan_device->functions();
+   const VkDevice device = vulkan_device->device();
+   const ui::vulkan::VulkanDevice::Properties& device_properties = vulkan_device->properties();
++
++  const auto early_cache_root = REXCVAR_GET(vulkan_driver_pipeline_cache_root);
++  if (!early_cache_root.empty()) {
++    InitializeDriverPipelineCache(early_cache_root,
++        uint32_t(REXCVAR_GET(vulkan_driver_pipeline_cache_title)));
++  }
+ 
+   // The unconditional inclusion of the vertex shader stage also covers the case
+   // of manual index / factor buffer fetch (the system constants and the shared
+@@ -2064,9 +2126,8 @@
+   std::array<VkResult, 4> swap_apply_gamma_pipeline_create_results;
+   for (size_t i = 0; i < swap_apply_gamma_pipelines.size(); ++i) {
+     swap_apply_gamma_pipeline_stages[1].module = swap_apply_gamma_pipeline_pixel_shaders[i];
+-    swap_apply_gamma_pipeline_create_results[i] = dfn.vkCreateGraphicsPipelines(
+-        device, VK_NULL_HANDLE, 1, &swap_apply_gamma_pipeline_create_info, nullptr,
+-        swap_apply_gamma_pipelines[i]);
++    swap_apply_gamma_pipeline_create_results[i] = CreateCachedGraphicsPipeline(
++        swap_apply_gamma_pipeline_create_info, *swap_apply_gamma_pipelines[i]);
+   }
+   if (!vulkan_device->properties().imageViewFormatSwizzle) {
+     auto create_rb_swap_pipeline = [&](const char* source, VkPipeline& pipeline_out,
+@@ -2084,9 +2145,7 @@
+         return;
+       }
+       swap_apply_gamma_pipeline_stages[1].module = pixel_shader_module;
+-      if (dfn.vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1,
+-                                        &swap_apply_gamma_pipeline_create_info, nullptr,
+-                                        &pipeline_out) != VK_SUCCESS) {
++      if (CreateCachedGraphicsPipeline(swap_apply_gamma_pipeline_create_info, pipeline_out) != VK_SUCCESS) {
+         REXGPU_WARN("Failed to create {} pipeline", pipeline_name);
+         pipeline_out = VK_NULL_HANDLE;
+       }
+@@ -2112,8 +2171,8 @@
+   }
+ 
+   // Gamma ramp application compute pipelines.
+-  swap_apply_gamma_compute_256_entry_table_pipeline_ = ui::vulkan::util::CreateComputePipeline(
+-      vulkan_device, swap_apply_gamma_compute_pipeline_layout_, shaders::apply_gamma_table_cs,
++  swap_apply_gamma_compute_256_entry_table_pipeline_ = CreateCachedComputePipeline(
++      swap_apply_gamma_compute_pipeline_layout_, shaders::apply_gamma_table_cs,
+       sizeof(shaders::apply_gamma_table_cs));
+   if (swap_apply_gamma_compute_256_entry_table_pipeline_ == VK_NULL_HANDLE) {
+     REXGPU_WARN(
+@@ -2121,22 +2180,22 @@
+         "pipeline, keeping graphics fallback");
+   }
+   swap_apply_gamma_compute_256_entry_table_fxaa_luma_pipeline_ =
+-      ui::vulkan::util::CreateComputePipeline(
+-          vulkan_device, swap_apply_gamma_compute_pipeline_layout_,
++      CreateCachedComputePipeline(
++          swap_apply_gamma_compute_pipeline_layout_,
+           shaders::apply_gamma_table_fxaa_luma_cs, sizeof(shaders::apply_gamma_table_fxaa_luma_cs));
+   if (swap_apply_gamma_compute_256_entry_table_fxaa_luma_pipeline_ == VK_NULL_HANDLE) {
+     REXGPU_WARN(
+         "Failed to create the 256-entry table gamma ramp application compute "
+         "pipeline with luma output");
+   }
+-  swap_apply_gamma_compute_pwl_pipeline_ = ui::vulkan::util::CreateComputePipeline(
+-      vulkan_device, swap_apply_gamma_compute_pipeline_layout_, shaders::apply_gamma_pwl_cs,
++  swap_apply_gamma_compute_pwl_pipeline_ = CreateCachedComputePipeline(
++      swap_apply_gamma_compute_pipeline_layout_, shaders::apply_gamma_pwl_cs,
+       sizeof(shaders::apply_gamma_pwl_cs));
+   if (swap_apply_gamma_compute_pwl_pipeline_ == VK_NULL_HANDLE) {
+     REXGPU_WARN("Failed to create the PWL gamma ramp application compute pipeline");
+   }
+-  swap_apply_gamma_compute_pwl_fxaa_luma_pipeline_ = ui::vulkan::util::CreateComputePipeline(
+-      vulkan_device, swap_apply_gamma_compute_pipeline_layout_,
++  swap_apply_gamma_compute_pwl_fxaa_luma_pipeline_ = CreateCachedComputePipeline(
++      swap_apply_gamma_compute_pipeline_layout_,
+       shaders::apply_gamma_pwl_fxaa_luma_cs, sizeof(shaders::apply_gamma_pwl_fxaa_luma_cs));
+   if (swap_apply_gamma_compute_pwl_fxaa_luma_pipeline_ == VK_NULL_HANDLE) {
+     REXGPU_WARN(
+@@ -2152,8 +2211,8 @@
+         REXGPU_WARN("Failed to compile {} shader to SPIR-V: {}", pipeline_name, compile_error);
+         return;
+       }
+-      pipeline_out = ui::vulkan::util::CreateComputePipeline(
+-          vulkan_device, swap_apply_gamma_compute_pipeline_layout_, compute_spirv.data(),
++      pipeline_out = CreateCachedComputePipeline(
++          swap_apply_gamma_compute_pipeline_layout_, compute_spirv.data(),
+           sizeof(uint32_t) * compute_spirv.size());
+       if (pipeline_out == VK_NULL_HANDLE) {
+         REXGPU_WARN("Failed to create {} pipeline", pipeline_name);
+@@ -2181,8 +2240,8 @@
+                           swap_fxaa_spirv, swap_fxaa_compile_error)) {
+     REXGPU_WARN("Failed to compile FXAA compute shader to SPIR-V: {}", swap_fxaa_compile_error);
+   } else {
+-    swap_fxaa_pipeline_ = ui::vulkan::util::CreateComputePipeline(
+-        vulkan_device, swap_fxaa_pipeline_layout_, swap_fxaa_spirv.data(),
++    swap_fxaa_pipeline_ = CreateCachedComputePipeline(
++        swap_fxaa_pipeline_layout_, swap_fxaa_spirv.data(),
+         sizeof(uint32_t) * swap_fxaa_spirv.size());
+     if (swap_fxaa_pipeline_ == VK_NULL_HANDLE) {
+       REXGPU_WARN("Failed to create the FXAA compute pipeline");
+@@ -2196,8 +2255,8 @@
+     REXGPU_WARN("Failed to compile extreme FXAA compute shader to SPIR-V: {}",
+                 swap_fxaa_extreme_compile_error);
+   } else {
+-    swap_fxaa_extreme_pipeline_ = ui::vulkan::util::CreateComputePipeline(
+-        vulkan_device, swap_fxaa_pipeline_layout_, swap_fxaa_extreme_spirv.data(),
++    swap_fxaa_extreme_pipeline_ = CreateCachedComputePipeline(
++        swap_fxaa_pipeline_layout_, swap_fxaa_extreme_spirv.data(),
+         sizeof(uint32_t) * swap_fxaa_extreme_spirv.size());
+     if (swap_fxaa_extreme_pipeline_ == VK_NULL_HANDLE) {
+       REXGPU_WARN("Failed to create the extreme-quality FXAA compute pipeline");
+@@ -2219,8 +2278,8 @@
+   resolve_downscale_layout_create_info.pPushConstantRanges = &resolve_downscale_push_constant_range;
+   if (dfn.vkCreatePipelineLayout(device, &resolve_downscale_layout_create_info, nullptr,
+                                  &resolve_downscale_pipeline_layout_) == VK_SUCCESS) {
+-    resolve_downscale_pipeline_ = ui::vulkan::util::CreateComputePipeline(
+-        vulkan_device, resolve_downscale_pipeline_layout_, shaders::resolve_downscale_cs,
++    resolve_downscale_pipeline_ = CreateCachedComputePipeline(
++        resolve_downscale_pipeline_layout_, shaders::resolve_downscale_cs,
+         sizeof(shaders::resolve_downscale_cs));
+     if (resolve_downscale_pipeline_ == VK_NULL_HANDLE) {
+       REXGPU_WARN("Failed to create Vulkan resolve-downscale readback pipeline");
+@@ -2373,6 +2432,8 @@
+   pipeline_cache_.reset();
+ 
+   render_target_cache_.reset();
++
++  driver_pipeline_cache_.reset();
+ 
+   primitive_processor_.reset();
+ 
+diff --git a/src/graphics/vulkan/render_target_cache.cpp b/src/graphics/vulkan/render_target_cache.cpp
+--- a/src/graphics/vulkan/render_target_cache.cpp
++++ b/src/graphics/vulkan/render_target_cache.cpp
+@@ -657,8 +657,8 @@
+     // Somewhat verification whether resolve_copy_shaders_ is up to date.
+     assert_true(resolve_copy_shader_code.unscaled && resolve_copy_shader_code.unscaled_size_bytes &&
+                 resolve_copy_shader_code.scaled && resolve_copy_shader_code.scaled_size_bytes);
+-    VkPipeline resolve_copy_pipeline = ui::vulkan::util::CreateComputePipeline(
+-        vulkan_device, resolve_copy_pipeline_layout_,
++    VkPipeline resolve_copy_pipeline = command_processor_.CreateCachedComputePipeline(
++        resolve_copy_pipeline_layout_,
+         draw_resolution_scaled ? resolve_copy_shader_code.scaled
+                                : resolve_copy_shader_code.unscaled,
+         draw_resolution_scaled ? resolve_copy_shader_code.scaled_size_bytes
+@@ -723,8 +723,8 @@
+     for (size_t i = 0; i < rex::countof(host_depth_store_shaders); ++i) {
+       const std::pair<const uint32_t*, size_t> host_depth_store_shader =
+           host_depth_store_shaders[i];
+-      VkPipeline host_depth_store_pipeline = ui::vulkan::util::CreateComputePipeline(
+-          vulkan_device, host_depth_store_pipeline_layout_, host_depth_store_shader.first,
++      VkPipeline host_depth_store_pipeline = command_processor_.CreateCachedComputePipeline(
++          host_depth_store_pipeline_layout_, host_depth_store_shader.first,
+           host_depth_store_shader.second);
+       if (host_depth_store_pipeline == VK_NULL_HANDLE) {
+         REXGPU_ERROR(
+@@ -895,8 +895,8 @@
+       Shutdown();
+       return false;
+     }
+-    resolve_fsi_clear_32bpp_pipeline_ = ui::vulkan::util::CreateComputePipeline(
+-        vulkan_device, resolve_fsi_clear_pipeline_layout_,
++    resolve_fsi_clear_32bpp_pipeline_ = command_processor_.CreateCachedComputePipeline(
++        resolve_fsi_clear_pipeline_layout_,
+         draw_resolution_scaled ? shaders::resolve_clear_32bpp_scaled_cs
+                                : shaders::resolve_clear_32bpp_cs,
+         draw_resolution_scaled ? sizeof(shaders::resolve_clear_32bpp_scaled_cs)
+@@ -908,8 +908,8 @@
+       Shutdown();
+       return false;
+     }
+-    resolve_fsi_clear_64bpp_pipeline_ = ui::vulkan::util::CreateComputePipeline(
+-        vulkan_device, resolve_fsi_clear_pipeline_layout_,
++    resolve_fsi_clear_64bpp_pipeline_ = command_processor_.CreateCachedComputePipeline(
++        resolve_fsi_clear_pipeline_layout_,
+         draw_resolution_scaled ? shaders::resolve_clear_64bpp_scaled_cs
+                                : shaders::resolve_clear_64bpp_cs,
+         draw_resolution_scaled ? sizeof(shaders::resolve_clear_64bpp_scaled_cs)
+@@ -4894,8 +4894,7 @@
+   pipeline_create_info.subpass = 0;
+   pipeline_create_info.basePipelineHandle = VK_NULL_HANDLE;
+   pipeline_create_info.basePipelineIndex = -1;
+-  if (dfn.vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipeline_create_info, nullptr,
+-                                    &pipelines[0]) != VK_SUCCESS) {
++  if (command_processor_.CreateCachedGraphicsPipeline(pipeline_create_info, pipelines[0]) != VK_SUCCESS) {
+     REXGPU_ERROR(
+         "VulkanRenderTargetCache: Failed to create the render target ownership "
+         "transfer pipeline for render pass 0x{:08X}, shader 0x{:08X}",
+@@ -4916,8 +4915,7 @@
+           (dest_sample_count == 2 && !msaa_2x_attachments_supported_ && i == 1) ? 3 : i;
+       sample_id_specialization_constant = host_sample_index;
+       sample_mask = uint32_t(1) << host_sample_index;
+-      if (dfn.vkCreateGraphicsPipelines(device, VK_NULL_HANDLE, 1, &pipeline_create_info, nullptr,
+-                                        &pipelines[i]) != VK_SUCCESS) {
++      if (command_processor_.CreateCachedGraphicsPipeline(pipeline_create_info, pipelines[i]) != VK_SUCCESS) {
+         REXGPU_ERROR(
+             "VulkanRenderTargetCache: Failed to create the render target "
+             "ownership transfer pipeline for render pass 0x{:08X}, shader "
+@@ -6262,8 +6260,7 @@
+ 
+   // Create the pipeline, and store the handle even if creation fails not to try
+   // to create it again later.
+-  VkPipeline pipeline = ui::vulkan::util::CreateComputePipeline(
+-      command_processor_.GetVulkanDevice(),
++  VkPipeline pipeline = command_processor_.CreateCachedComputePipeline(
+       key.is_depth ? dump_pipeline_layout_depth_ : dump_pipeline_layout_color_,
+       reinterpret_cast<const uint32_t*>(shader_code.data()), sizeof(uint32_t) * shader_code.size());
+   if (pipeline == VK_NULL_HANDLE) {
+@@ -6541,7 +6538,7 @@
+         is_depth, msaa_index, compile_error);
+     return VK_NULL_HANDLE;
+   }
+-  pipeline = ui::vulkan::util::CreateComputePipeline(command_processor_.GetVulkanDevice(),
++  pipeline = command_processor_.CreateCachedComputePipeline(
+                                                      pipeline_layout, spirv.data(),
+                                                      sizeof(uint32_t) * spirv.size());
+   if (pipeline == VK_NULL_HANDLE) {
+diff --git a/src/graphics/vulkan/texture_cache.cpp b/src/graphics/vulkan/texture_cache.cpp
+--- a/src/graphics/vulkan/texture_cache.cpp
++++ b/src/graphics/vulkan/texture_cache.cpp
+@@ -1727,8 +1727,8 @@
+         uint32_t(load_shader), compile_error);
+     return VK_NULL_HANDLE;
+   }
+-  VkPipeline pipeline = ui::vulkan::util::CreateComputePipeline(
+-      command_processor_.GetVulkanDevice(), load_pipeline_layout_texel_, spirv.data(),
++  VkPipeline pipeline = command_processor_.CreateCachedComputePipeline(
++      load_pipeline_layout_texel_, spirv.data(),
+       sizeof(uint32_t) * spirv.size());
+   if (pipeline == VK_NULL_HANDLE) {
+     REXGPU_WARN("VulkanTextureCache: Failed to create the texel-buffer load pipeline (index {})",
+@@ -1769,8 +1769,8 @@
+         uint32_t(load_shader), compile_error);
+     return VK_NULL_HANDLE;
+   }
+-  VkPipeline pipeline = ui::vulkan::util::CreateComputePipeline(
+-      command_processor_.GetVulkanDevice(), load_pipeline_layout_storage_dest_, spirv.data(),
++  VkPipeline pipeline = command_processor_.CreateCachedComputePipeline(
++      load_pipeline_layout_storage_dest_, spirv.data(),
+       sizeof(uint32_t) * spirv.size());
+   if (pipeline == VK_NULL_HANDLE) {
+     REXGPU_WARN("VulkanTextureCache: Failed to create the storage-image load pipeline (index {})",
+@@ -4201,8 +4201,8 @@
+     }
+     const std::pair<const uint32_t*, size_t>& current_load_shader_code = load_shader_code[i];
+     assert_not_null(current_load_shader_code.first);
+-    load_pipelines_[i] = ui::vulkan::util::CreateComputePipeline(
+-        vulkan_device, load_pipeline_layout_, current_load_shader_code.first,
++    load_pipelines_[i] = command_processor_.CreateCachedComputePipeline(
++        load_pipeline_layout_, current_load_shader_code.first,
+         current_load_shader_code.second);
+     if (load_pipelines_[i] == VK_NULL_HANDLE) {
+       REXGPU_ERROR(
+@@ -4215,8 +4215,8 @@
+       const std::pair<const uint32_t*, size_t>& current_load_shader_code_scaled =
+           load_shader_code_scaled[i];
+       if (current_load_shader_code_scaled.first) {
+-        load_pipelines_scaled_[i] = ui::vulkan::util::CreateComputePipeline(
+-            vulkan_device, load_pipeline_layout_, current_load_shader_code_scaled.first,
++        load_pipelines_scaled_[i] = command_processor_.CreateCachedComputePipeline(
++            load_pipeline_layout_, current_load_shader_code_scaled.first,
+             current_load_shader_code_scaled.second);
+         if (load_pipelines_scaled_[i] == VK_NULL_HANDLE) {
+           REXGPU_ERROR(
+diff --git a/include/rex/graphics/vulkan/driver_pipeline_cache.h b/include/rex/graphics/vulkan/driver_pipeline_cache.h
+new file mode 100644
+--- /dev/null
++++ b/include/rex/graphics/vulkan/driver_pipeline_cache.h
+@@ -0,0 +1,167 @@
++#pragma once
++
++#include <rex/hash.h>
++#include <rex/logging.h>
++#include <rex/ui/vulkan/device.h>
++#include <atomic>
++#include <mutex>
++#include <fmt/format.h>
++#include <chrono>
++#include <condition_variable>
++#include <cstdio>
++#include <cstring>
++#include <filesystem>
++#include <fstream>
++#include <shared_mutex>
++#include <thread>
++#include <vector>
++
++namespace rex::graphics::vulkan {
++
++// Device-specific driver binaries complement the portable Xenos shader/PSO
++// descriptions. Cache creation uses internal Vulkan synchronization; a shared
++// lock permits parallel compilation while snapshots/destruction are exclusive.
++class DriverPipelineCache {
++ public:
++  DriverPipelineCache(const ui::vulkan::VulkanDevice& device,
++                      const std::filesystem::path& root, uint32_t title_id)
++      : device_(device) {
++    device_.vulkan_instance()->functions().vkGetPhysicalDeviceProperties(
++        device_.physical_device(), &properties_);
++    std::error_code error;
++    std::filesystem::create_directories(root, error);
++    if (error) return;
++    path_ = root / fmt::format("{:08X}-{:04X}-{:04X}-{:08X}-v1.vkc", title_id,
++        properties_.vendorID, properties_.deviceID, properties_.driverVersion);
++    auto data = Read();
++    VkPipelineCacheCreateInfo info{VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO};
++    info.initialDataSize = data.size();
++    info.pInitialData = data.empty() ? nullptr : data.data();
++    auto result = device_.functions().vkCreatePipelineCache(device_.device(), &info, nullptr, &cache_);
++    if (result != VK_SUCCESS && !data.empty()) {
++      info.initialDataSize = 0; info.pInitialData = nullptr;
++      data.clear();
++      result = device_.functions().vkCreatePipelineCache(device_.device(), &info, nullptr, &cache_);
++    }
++    if (result != VK_SUCCESS) {
++      cache_ = VK_NULL_HANDLE;
++      REXGPU_WARN("Vulkan driver cache unavailable (result={})", int32_t(result));
++    } else {
++      REXGPU_INFO("Vulkan driver cache loaded: {} bytes, {}", data.size(), path_.string());
++    }
++  }
++  ~DriverPipelineCache() {
++    {
++      std::lock_guard<std::mutex> lock(worker_mutex_);
++      stop_ = true;
++    }
++    worker_condition_.notify_one();
++    if (worker_.joinable()) worker_.join();
++    Save();
++    std::unique_lock<std::shared_mutex> lock(cache_mutex_);
++    if (cache_ != VK_NULL_HANDLE)
++      device_.functions().vkDestroyPipelineCache(device_.device(), cache_, nullptr);
++  }
++  void StartSaving() {
++    Save(); // Startup preload is saved before the guest starts.
++    if (cache_ == VK_NULL_HANDLE || worker_.joinable()) return;
++    worker_ = std::thread([this] {
++      std::unique_lock<std::mutex> lock(worker_mutex_);
++      while (!stop_) {
++        worker_condition_.wait_for(lock, std::chrono::seconds(5), [this] { return stop_; });
++        if (stop_) break;
++        lock.unlock(); Save(); lock.lock();
++      }
++    });
++  }
++  VkResult Create(const VkGraphicsPipelineCreateInfo& info, VkPipeline& pipeline) {
++    std::shared_lock<std::shared_mutex> lock(cache_mutex_);
++    auto result = device_.functions().vkCreateGraphicsPipelines(
++        device_.device(), cache_, 1, &info, nullptr, &pipeline);
++    if (result == VK_SUCCESS && cache_ != VK_NULL_HANDLE) revision_.fetch_add(1);
++    return result;
++  }
++
++  VkResult Create(const VkComputePipelineCreateInfo& info, VkPipeline& pipeline) {
++    std::shared_lock<std::shared_mutex> lock(cache_mutex_);
++    auto result = device_.functions().vkCreateComputePipelines(
++        device_.device(), cache_, 1, &info, nullptr, &pipeline);
++    if (result == VK_SUCCESS && cache_ != VK_NULL_HANDLE) revision_.fetch_add(1);
++    return result;
++  }
++
++ private:
++  struct Header {
++    uint32_t magic = 0x434B564E, version = 1, driver = 0, size = 0;
++    uint64_t hash = 0;
++  };
++  static constexpr size_t kMaxBytes = 128 * 1024 * 1024;
++  std::vector<uint8_t> Read() {
++    std::ifstream input(path_, std::ios::binary | std::ios::ate);
++    if (!input) return {};
++    const auto bytes = input.tellg();
++    if (bytes < std::streamoff(sizeof(Header) + sizeof(VkPipelineCacheHeaderVersionOne)) ||
++        bytes > std::streamoff(sizeof(Header) + kMaxBytes)) return {};
++    input.seekg(0);
++    Header header;
++    input.read(reinterpret_cast<char*>(&header), sizeof(header));
++    if (!input || header.magic != 0x434B564E || header.version != 1 ||
++        header.driver != properties_.driverVersion || header.size > kMaxBytes ||
++        bytes != std::streamoff(sizeof(Header) + header.size)) return {};
++    std::vector<uint8_t> data(header.size);
++    input.read(reinterpret_cast<char*>(data.data()), data.size());
++    if (!input || XXH3_64bits(data.data(), data.size()) != header.hash) return {};
++    VkPipelineCacheHeaderVersionOne cache_header;
++    std::memcpy(&cache_header, data.data(), sizeof(cache_header));
++    if (cache_header.headerSize < sizeof(cache_header) || cache_header.headerSize > data.size() ||
++        cache_header.headerVersion != VK_PIPELINE_CACHE_HEADER_VERSION_ONE ||
++        cache_header.vendorID != properties_.vendorID || cache_header.deviceID != properties_.deviceID ||
++        std::memcmp(cache_header.pipelineCacheUUID, properties_.pipelineCacheUUID, VK_UUID_SIZE)) return {};
++    return data;
++  }
++  void Save() {
++    std::lock_guard<std::mutex> saving(save_mutex_);
++    if (cache_ == VK_NULL_HANDLE || path_.empty() || revision_.load() == saved_revision_) return;
++    size_t size = 0;
++    std::vector<uint8_t> data;
++    uint64_t revision;
++    {
++      std::unique_lock<std::shared_mutex> lock(cache_mutex_);
++      revision = revision_.load();
++      if (device_.functions().vkGetPipelineCacheData(device_.device(), cache_, &size, nullptr) != VK_SUCCESS ||
++          size < sizeof(VkPipelineCacheHeaderVersionOne) || size > kMaxBytes) return;
++      data.resize(size);
++      if (device_.functions().vkGetPipelineCacheData(device_.device(), cache_, &size, data.data()) != VK_SUCCESS)
++        return;
++    }
++    data.resize(size);
++    Header header;
++    header.driver = properties_.driverVersion; header.size = uint32_t(size);
++    header.hash = XXH3_64bits(data.data(), data.size());
++    auto pending = path_; pending += ".pending";
++    {
++      std::ofstream output(pending, std::ios::binary | std::ios::trunc);
++      output.write(reinterpret_cast<const char*>(&header), sizeof(header));
++      output.write(reinterpret_cast<const char*>(data.data()), data.size());
++      output.flush();
++      if (!output) return;
++    }
++    std::error_code error;
++    std::filesystem::rename(pending, path_, error);
++    if (error) return;
++    saved_revision_ = revision;
++    REXGPU_INFO("Vulkan driver cache saved: {} bytes, {}", size, path_.string());
++  }
++  const ui::vulkan::VulkanDevice& device_;
++  VkPhysicalDeviceProperties properties_{};
++  VkPipelineCache cache_ = VK_NULL_HANDLE;
++  std::filesystem::path path_;
++  std::shared_mutex cache_mutex_;
++  std::mutex save_mutex_, worker_mutex_;
++  std::condition_variable worker_condition_;
++  std::thread worker_;
++  bool stop_ = false;
++  std::atomic<uint64_t> revision_{0};
++  uint64_t saved_revision_ = 0;
++};
++} // namespace rex::graphics::vulkan
+diff --git a/include/rex/graphics/vulkan/shader_startup_progress.h b/include/rex/graphics/vulkan/shader_startup_progress.h
+new file mode 100644
+--- /dev/null
++++ b/include/rex/graphics/vulkan/shader_startup_progress.h
+@@ -0,0 +1,40 @@
++#pragma once
++#include <cstdlib>
++#include <filesystem>
++#include <fstream>
++#include <mutex>
++
++namespace rex::graphics::vulkan {
++// Optional Android startup indicator. Updates occur only during preload, in
++// batches, and use atomic replacement so the UI never reads a partial record.
++class ShaderStartupProgress {
++ public:
++  ShaderStartupProgress() {
++    if (const char* path = std::getenv("NHL_SHADER_PROGRESS")) path_ = path;
++    Write("preparing");
++  }
++  ~ShaderStartupProgress() { Write("ready"); }
++  void SetTotal(size_t total) { total_ = total; Write("preparing"); }
++  void Advance() {
++    if (path_.empty()) return;
++    std::lock_guard<std::mutex> lock(mutex_);
++    ++completed_;
++    if (completed_ % 8 == 0 || completed_ == total_) Write("preparing");
++  }
++ private:
++  void Write(const char* stage) {
++    if (path_.empty()) return;
++    auto temporary = path_; temporary += ".pending";
++    {
++      std::ofstream stream(temporary, std::ios::trunc);
++      stream << stage << ' ' << completed_ << ' ' << total_ << '\n';
++      if (!stream) return;
++    }
++    std::error_code error;
++    std::filesystem::rename(temporary, path_, error);
++  }
++  std::filesystem::path path_;
++  std::mutex mutex_;
++  size_t completed_ = 0, total_ = 0;
++};
++} // namespace rex::graphics::vulkan

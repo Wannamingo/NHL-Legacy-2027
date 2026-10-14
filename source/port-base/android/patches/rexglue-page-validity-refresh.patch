@@ -1,0 +1,56 @@
+diff --git a/src/graphics/shared_memory.cpp b/src/graphics/shared_memory.cpp
+index d29ef9b..4badcf0 100644
+--- a/src/graphics/shared_memory.cpp
++++ b/src/graphics/shared_memory.cpp
+@@ -124,41 +124,22 @@ void SharedMemory::InvalidateAllPages() {
+ }
+ 
+ void SharedMemory::SetSystemPageBlocksValidWithGpuDataWritten() {
+-  if (!gpu_written_data_dirty_.load(std::memory_order_relaxed)) {
+-    return;
+-  }
+-
+-  uint64_t* staging = staging_valid_flags_.load(std::memory_order_acquire);
+-  if (!staging || !num_system_page_flags_) {
++  // Drop CPU-uploaded validity every frame, retaining only GPU-written data.
++  // Guest invalidation callbacks hold this lock too. Updating in place avoids
++  // losing their clears in a swapped-out buffer and avoids stale untouched
++  // blocks from the previous staging snapshot.
++  auto global_lock = global_critical_region_.Acquire();
++  uint64_t* active = active_valid_flags_.load(std::memory_order_relaxed);
++  if (!active || !num_system_page_flags_) {
+     gpu_written_data_dirty_.store(false, std::memory_order_relaxed);
+     dirty_blocks_.store(0, std::memory_order_relaxed);
+     return;
+   }
+ 
+-  uint32_t dirty_mask = dirty_blocks_.exchange(0, std::memory_order_relaxed);
+-  uint32_t dirty_count = rex::bit_count(dirty_mask);
+-  if (dirty_count == 0 || dirty_count > 16) {
+-    std::memcpy(staging, system_page_flags_valid_and_gpu_written_.data(),
+-                num_system_page_flags_ * sizeof(uint64_t));
+-  } else {
+-    while (dirty_mask) {
+-      uint32_t block_index;
+-      rex::bit_scan_forward(dirty_mask, &block_index);
+-      dirty_mask &= ~(uint32_t(1) << block_index);
+-      uint32_t entry_offset = block_index * 64;
+-      if (entry_offset >= num_system_page_flags_) {
+-        continue;
+-      }
+-      uint32_t entry_count = std::min(uint32_t(64), num_system_page_flags_ - entry_offset);
+-      std::memcpy(staging + entry_offset,
+-                  system_page_flags_valid_and_gpu_written_.data() + entry_offset,
+-                  entry_count * sizeof(uint64_t));
+-    }
+-  }
+-
+-  uint64_t* old_active = active_valid_flags_.exchange(staging, std::memory_order_acq_rel);
+-  staging_valid_flags_.store(old_active, std::memory_order_release);
++  std::memcpy(active, system_page_flags_valid_and_gpu_written_.data(),
++              num_system_page_flags_ * sizeof(uint64_t));
+   gpu_written_data_dirty_.store(false, std::memory_order_relaxed);
++  dirty_blocks_.store(0, std::memory_order_relaxed);
+ }
+ 
+ void SharedMemory::ClearCache() {

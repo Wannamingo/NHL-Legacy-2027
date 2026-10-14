@@ -1,0 +1,174 @@
+--- a/src/ui/presenter.cpp
++++ b/src/ui/presenter.cpp
+@@ -22,6 +22,7 @@
+ #include <rex/logging.h>
+ #include <rex/platform.h>
+ #include <rex/ui/presenter.h>
++#include <rex/ui/frame_diagnostics.h>
+ #include <rex/ui/window.h>
+ 
+ #if defined(REX_HAS_FIDELITYFX_RUNTIME) && REX_HAS_FIDELITYFX_RUNTIME
+@@ -32,6 +33,31 @@
+ #if REX_PLATFORM_WIN32
+ #include <rex/ui/window_win.h>
+ #endif
++
++namespace rex::ui::diagnostics {
++namespace {
++std::atomic<bool> enabled{false};
++std::atomic<int> render_tid{0};
++std::array<std::atomic<uint64_t>, size_t(Wait::kCount)> total_ns{}, total_calls{};
++}
++void SetEnabled(bool value) { enabled.store(value, std::memory_order_relaxed); }
++bool Enabled() { return enabled.load(std::memory_order_relaxed); }
++void SetRenderThreadId(int tid) { render_tid.store(tid, std::memory_order_relaxed); }
++int RenderThreadId() { return render_tid.load(std::memory_order_relaxed); }
++void AddWait(Wait kind, uint64_t ns) {
++  const size_t i = size_t(kind);
++  total_ns[i].fetch_add(ns, std::memory_order_relaxed);
++  total_calls[i].fetch_add(1, std::memory_order_relaxed);
++}
++Totals ReadTotals() {
++  Totals result;
++  for (size_t i = 0; i < size_t(Wait::kCount); ++i) {
++    result.nanoseconds[i] = total_ns[i].load(std::memory_order_relaxed);
++    result.calls[i] = total_calls[i].load(std::memory_order_relaxed);
++  }
++  return result;
++}
++}  // namespace rex::ui::diagnostics
+ 
+ REXCVAR_DEFINE_BOOL(host_present_from_non_ui_thread, true, "UI/Presenter",
+                     "Allow presentation from non-UI thread");
+@@ -612,6 +638,7 @@
+     if (frame_limit > 0) {
+       const auto period = std::chrono::nanoseconds((1000000000LL + frame_limit - 1) / frame_limit);
+       if (guest_output_last_paced_.time_since_epoch().count()) {
++        diagnostics::WaitTimer cap_timer(diagnostics::Wait::kFrameCap);
+         std::this_thread::sleep_until(guest_output_last_paced_ + period);
+       }
+       guest_output_last_paced_ = std::chrono::steady_clock::now();
+--- a/src/ui/vulkan/vulkan_presenter.cpp
++++ b/src/ui/vulkan/vulkan_presenter.cpp
+@@ -27,6 +27,7 @@
+ #include <rex/math.h>
+ #include <rex/platform.h>
+ #include <rex/ui/vulkan/presenter.h>
++#include <rex/ui/frame_diagnostics.h>
+ #include <rex/ui/vulkan/util.h>
+ 
+ #if defined(REX_HAS_FIDELITYFX_RUNTIME) && REX_HAS_FIDELITYFX_RUNTIME
+@@ -1861,6 +1862,7 @@
+       uint64_t(std::max(1, REXCVAR_GET(vulkan_max_frames_in_flight)));
+   paint_submission_count = std::min(paint_submission_count, max_frames_in_flight);
+   if (current_paint_submission_index >= paint_submission_count) {
++    diagnostics::WaitTimer retire_timer(diagnostics::Wait::kRetire);
+     if (!paint_context_.submission_tracker.AwaitSubmissionCompletion(
+             current_paint_submission_index - paint_submission_count)) {
+       // The fence never signalled and the wait gave up rather than hanging the
+@@ -1908,9 +1910,13 @@
+   VkSemaphore acquire_semaphore = paint_submission.acquire_semaphore();
+   uint32_t swapchain_image_index;
+   const auto timing_acquire_start = TimingNow(timing_on);
+-  VkResult acquire_result =
+-      dfn.vkAcquireNextImageKHR(device, paint_context_.swapchain, UINT64_MAX, acquire_semaphore,
+-                                VK_NULL_HANDLE, &swapchain_image_index);
++  VkResult acquire_result;
++  {
++    diagnostics::WaitTimer acquire_timer(diagnostics::Wait::kAcquire);
++    acquire_result = dfn.vkAcquireNextImageKHR(
++        device, paint_context_.swapchain, UINT64_MAX, acquire_semaphore,
++        VK_NULL_HANDLE, &swapchain_image_index);
++  }
+   const auto timing_acquire_end = TimingNow(timing_on);
+   switch (acquire_result) {
+     case VK_SUCCESS:
+@@ -2627,7 +2633,11 @@
+   const auto timing_present_start = TimingNow(timing_on);
+   {
+     const VulkanDevice::Queue::Acquisition queue_acquisition =
+-        vulkan_device_->AcquireQueue(paint_context_.present_queue_family, 0);
++        [&] {
++          diagnostics::WaitTimer queue_timer(diagnostics::Wait::kQueueLock);
++          return vulkan_device_->AcquireQueue(paint_context_.present_queue_family, 0);
++        }();
++    diagnostics::WaitTimer present_timer(diagnostics::Wait::kPresentCall);
+     present_result = dfn.vkQueuePresentKHR(queue_acquisition.queue(), &present_info);
+   }
+   const auto timing_present_end = TimingNow(timing_on);
+--- a/src/graphics/vulkan/command_processor.cpp
++++ b/src/graphics/vulkan/command_processor.cpp
+@@ -62,6 +62,10 @@
+ #include <rex/types.h>
+ #include <rex/memory/utils.h>
+ #include <rex/ui/flags.h>
++#include <rex/ui/frame_diagnostics.h>
++#if REX_PLATFORM_ANDROID
++#include <unistd.h>
++#endif
+ #include <rex/ui/vulkan/presenter.h>
+ #include <rex/ui/vulkan/util.h>
+ 
+@@ -2683,6 +2687,9 @@
+ void VulkanCommandProcessor::IssueSwap(uint32_t frontbuffer_ptr, uint32_t frontbuffer_width,
+                                        uint32_t frontbuffer_height) {
+   SCOPE_profile_cpu_f("gpu");
++#if REX_PLATFORM_ANDROID
++  if (ui::diagnostics::Enabled()) ui::diagnostics::SetRenderThreadId(gettid());
++#endif
+   vertex_buffers_in_sync_[0] = 0;
+   vertex_buffers_in_sync_[1] = 0;
+ 
+@@ -7559,7 +7566,11 @@
+       rex::perf::ScopedCounterTimer execute_command_lists_timer(
+           rex::perf::CounterId::kCpuD3D12ExecuteCommandListsUs);
+       ui::vulkan::VulkanDevice::Queue::Acquisition queue_acquisition =
+-          vulkan_device->AcquireQueue(vulkan_device->queue_family_graphics_compute(), 0);
++          [&] {
++            ui::diagnostics::WaitTimer timer(ui::diagnostics::Wait::kRenderQueueLock);
++            return vulkan_device->AcquireQueue(vulkan_device->queue_family_graphics_compute(), 0);
++          }();
++      ui::diagnostics::WaitTimer submit_timer(ui::diagnostics::Wait::kRenderSubmit);
+       submit_result = dfn.vkQueueSubmit(queue_acquisition.queue(), 1, &submit_info, fence);
+     }
+     if (submit_result == VK_SUCCESS) {
+--- /dev/null
++++ b/include/rex/ui/frame_diagnostics.h
+@@ -0,0 +1,37 @@
++#pragma once
++#include <array>
++#include <chrono>
++#include <cstdint>
++
++namespace rex::ui::diagnostics {
++enum class Wait : size_t {
++  kAcquire, kPresentCall, kRetire, kFrameCap, kQueueLock,
++  kRenderQueueLock, kRenderSubmit, kCount
++};
++struct Totals {
++  std::array<uint64_t, size_t(Wait::kCount)> nanoseconds{}, calls{};
++};
++// Cumulative counters: no resets while a measured operation is in flight.
++void SetEnabled(bool enabled);
++bool Enabled();
++Totals ReadTotals();
++void AddWait(Wait kind, uint64_t nanoseconds);
++void SetRenderThreadId(int tid);
++int RenderThreadId();
++class WaitTimer {
++ public:
++  explicit WaitTimer(Wait kind) : kind_(kind), enabled_(Enabled()) {
++    if (enabled_) start_ = std::chrono::steady_clock::now();
++  }
++  ~WaitTimer() {
++    if (enabled_) AddWait(kind_, uint64_t(std::chrono::duration_cast<std::chrono::nanoseconds>(
++        std::chrono::steady_clock::now() - start_).count()));
++  }
++  WaitTimer(const WaitTimer&) = delete;
++  WaitTimer& operator=(const WaitTimer&) = delete;
++ private:
++  Wait kind_;
++  bool enabled_;
++  std::chrono::steady_clock::time_point start_{};
++};
++}  // namespace rex::ui::diagnostics

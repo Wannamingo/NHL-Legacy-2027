@@ -1,0 +1,29 @@
+diff --git a/src/ui/presenter.cpp b/src/ui/presenter.cpp
+index eee39e5..931477d 100644
+--- a/src/ui/presenter.cpp
++++ b/src/ui/presenter.cpp
+@@ -56,6 +56,9 @@ REXCVAR_DEFINE_BOOL(presenter_present_cadence_log, false, "UI/Presenter",
+ REXCVAR_DEFINE_BOOL(present_letterbox, true, "UI/Presenter",
+                     "Enable letterboxing for non-native aspect ratios");
+ 
++REXCVAR_DEFINE_BOOL(present_original_aspect, false, "UI/Presenter",
++                    "Preserve the guest output image aspect instead of forcing a display ratio");
++
+ REXCVAR_DEFINE_INT32(present_safe_area_x, 100, "UI/Presenter",
+                      "Horizontal safe area percentage (0-100)")
+     .range(0, 100);
+@@ -580,8 +583,12 @@ bool Presenter::RefreshGuestOutput(
+       guest_output_properties_[guest_output_mailbox_writable_];
+   writable_properties.frontbuffer_width = frontbuffer_width;
+   writable_properties.frontbuffer_height = frontbuffer_height;
+-  writable_properties.display_aspect_ratio_x = display_aspect_ratio_x;
+-  writable_properties.display_aspect_ratio_y = display_aspect_ratio_y;
++  const bool preserve_source_aspect = REXCVAR_GET(present_original_aspect) &&
++                                      frontbuffer_width != 0 && frontbuffer_height != 0;
++  writable_properties.display_aspect_ratio_x =
++      preserve_source_aspect ? frontbuffer_width : display_aspect_ratio_x;
++  writable_properties.display_aspect_ratio_y =
++      preserve_source_aspect ? frontbuffer_height : display_aspect_ratio_y;
+   writable_properties.is_8bpc = false;
+   bool is_active = writable_properties.IsActive();
+   if (is_active) {

@@ -1,0 +1,18 @@
+diff --git a/src/input/sdl/sdl_input_driver.cpp b/src/input/sdl/sdl_input_driver.cpp
+index 40d3692..1da1521 100644
+--- a/src/input/sdl/sdl_input_driver.cpp
++++ b/src/input/sdl/sdl_input_driver.cpp
+@@ -753,6 +753,13 @@ void SDLInputDriver::StopRumbleLocked(ControllerState& state) {
+ }
+ 
+ void SDLInputDriver::OnControllerDeviceAddedLocked(const SDL_Event& event) {
++  // Startup enumeration and the queued GAMEPAD_ADDED event can refer to the
++  // same instance. Opening it twice would occupy two Xbox controller slots.
++  if (GetControllerIndexFromInstanceID(event.gdevice.which)) {
++    REXLOG_INFO("SDL gamepad instance {} already registered; ignoring duplicate add",
++                event.gdevice.which);
++    return;
++  }
+   // Open the controller.
+   const auto controller = SDL_OpenGamepad(event.cdevice.which);
+   if (!controller) {
