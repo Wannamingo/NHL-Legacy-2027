@@ -1,3 +1,15 @@
+## NHL Legacy 2027 — 1.0.2
+
+Лаунчер теперь поддерживает русский и английский языки. Кнопка **RU / EN** в правом верхнем углу переключает текст сразу, сохраняет выбор для следующих запусков и работает независимо от языка самой игры. Переведены главный экран, настройки, импорт ISO, составы, видеодрайверы и сообщения об ошибках. Справка первого запуска исправлена: игровые данные импортируются из ISO.
+
+The launcher now supports Russian and English. Tap **RU / EN** in the upper-right corner to switch immediately; the choice persists across restarts and does not change the game's own language. The home screen, settings, ISO and roster imports, graphics-driver controls, and common diagnostics are translated. The first-launch help correctly refers to ISO import.
+
+Signed Android ARM64 APK; `versionCode 13`, same package and signing certificate as 1.0.1. The game libraries, assets, and ISO importer are unchanged byte for byte. Host checks covered the language preference, both toggle directions, UI labels, diagnostic translation, APK signing, ZIP integrity, and 16 KB native-library alignment. On Lenovo Y700, the APK installed over 1.0.1 without removing game files. EN → RU → EN changed the visible launcher text immediately; EN persisted after force-stop and reopening. The English help correctly describes ISO import. A new match was not run for this language-only update; the successful full ISO import was tested on 1.0.1.
+
+The existing limitations remain: full-game completion and all GPU/driver combinations are untested; FPS may drop in demanding views, and goalkeeper pose errors have appeared in replays. Bring your own original NHL Legacy Edition ISO; game files are not included.
+
+---
+
 ## NHL Legacy 2027 — 1.0.1
 
 ### Русский

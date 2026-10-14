@@ -1,4 +1,4 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.nhllegacy.port" android:versionCode="12" android:versionName="1.0.0-final-20261013">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="org.nhllegacy.port" android:versionCode="13" android:versionName="1.0.2-final-20261014">
   <uses-sdk android:minSdkVersion="28" android:targetSdkVersion="35" />
   <uses-feature android:name="android.hardware.vulkan.level" android:version="1" android:required="true" />
   <uses-feature android:name="android.hardware.vulkan.version" android:version="0x00402000" android:required="true" />

@@ -1,8 +1,8 @@
 # NHL Legacy 2027 for Android
 
-An unofficial Android ARM64 port of NHL Legacy Edition. Release `v1.0.1` includes the NHL Legacy 2027 launcher, Vulkan renderer, touch controls, and import from your own Xbox 360 ISO.
+An unofficial Android ARM64 port of NHL Legacy Edition. Release `v1.0.2` includes the NHL Legacy 2027 launcher, Vulkan renderer, touch controls, and import from your own Xbox 360 ISO.
 
-**[Download APK](https://github.com/Wannamingo/NHL-Legacy-2027/releases/download/v1.0.1/NHL-Legacy-2027.apk)** · [Releases](https://github.com/Wannamingo/NHL-Legacy-2027/releases) · [Русский](README.md)
+**[Download APK](https://github.com/Wannamingo/NHL-Legacy-2027/releases/download/v1.0.2/NHL-Legacy-2027.apk)** · [Releases](https://github.com/Wannamingo/NHL-Legacy-2027/releases) · [Русский](README.md)
 
 ## Installation
 
@@ -16,6 +16,7 @@ ZIP import for **game data** has been removed. ZIP remains available separately 
 ## Features
 
 - Match quality modes: 960 × 540 or 1280 × 720; UI at 1280 × 720. Choose the mode in the launcher before starting the game.
+- Russian and English launcher text: the **RU / EN** button in the upper right switches immediately and remembers your choice. The game's own language is selected separately in the game.
 - Independent visibility controls for spectators, stands and seats, and bench players. On-ice player quality is retained.
 - System Vulkan driver or a user-imported AdrenoTools driver; driver changes require restarting the game. A graphics-cache clear option is available.
 - Per-profile roster ZIP updates for new games and seasons without rewriting existing saves.

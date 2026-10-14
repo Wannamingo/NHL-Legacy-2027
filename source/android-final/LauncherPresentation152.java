@@ -36,6 +36,8 @@ final class LauncherPresentation152 {
 
     private LauncherPresentation152() { }
 
+    private static String tr(Activity activity, String russian) { return LauncherLanguage.text(activity, russian); }
+
     static View create(Activity activity, ScrollView settings, Button play, Button importData,
                        TextView status, ProgressBar progress, Button cancelImport) {
         activity.getWindow().setStatusBarColor(Color.BLACK);
@@ -68,7 +70,10 @@ final class LauncherPresentation152 {
         Button help = new Button(activity);
         help.setText("?"); styleOutline(activity, help);
         top.addView(help, new LinearLayout.LayoutParams(dp(activity, 44), dp(activity, 42)));
-        TextView language = label(activity, "  RU  ", 15, WHITE);
+        TextView language = label(activity, LauncherLanguage.isEnglish(activity) ? "  EN  " : "  RU  ", 15, WHITE);
+        language.setContentDescription(tr(activity, "Переключить язык"));
+        language.setClickable(true);
+        language.setOnClickListener(v -> ((LauncherActivity)activity).switchLanguage());
         language.setGravity(Gravity.CENTER);
         language.setBackground(panelBackground(activity, 0x9c0b2b3d, dp(activity, 21)));
         LinearLayout.LayoutParams languageParams = new LinearLayout.LayoutParams(dp(activity, 60), dp(activity, 42));
@@ -99,13 +104,13 @@ final class LauncherPresentation152 {
         edition.setLetterSpacing(0.18f);
         edition.setGravity(Gravity.CENTER);
         card.addView(edition, new LinearLayout.LayoutParams(-1, -2));
-        TextView subtitle = label(activity, "ХОККЕЙ НА ТВОЁМ УСТРОЙСТВЕ", 10, MUTED);
+        TextView subtitle = label(activity, tr(activity, "ХОККЕЙ НА ТВОЁМ УСТРОЙСТВЕ"), 10, MUTED);
         subtitle.setLetterSpacing(0.12f); subtitle.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams subParams = new LinearLayout.LayoutParams(-1, -2);
         subParams.topMargin = dp(activity, 4); subParams.bottomMargin = dp(activity, 12);
         card.addView(subtitle, subParams);
 
-        play.setText("▶   ИГРАТЬ");
+        play.setText(tr(activity, "▶   ИГРАТЬ"));
         play.setTextSize(20); play.setTypeface(null, Typeface.BOLD); play.setLetterSpacing(0.14f);
         play.setAllCaps(false); play.setTextColor(Color.rgb(8, 57, 67));
         play.setBackground(gradient(activity, new int[]{0xffb4ffea, 0xff5edbcf}, dp(activity, 10), 0xffc8fff1));
@@ -116,9 +121,9 @@ final class LauncherPresentation152 {
         actionsParams.topMargin = dp(activity, 10);
         card.addView(actions, actionsParams);
         Button settingsButton = new Button(activity);
-        settingsButton.setText("⚙  Настройки"); styleOutline(activity, settingsButton);
+        settingsButton.setText(tr(activity, "⚙  Настройки")); styleOutline(activity, settingsButton);
         actions.addView(settingsButton, new LinearLayout.LayoutParams(0, -1, 1));
-        importData.setText("⇩  Импорт ISO"); styleOutline(activity, importData);
+        importData.setText(tr(activity, "⇩  Импорт ISO")); styleOutline(activity, importData);
         LinearLayout.LayoutParams importParams = new LinearLayout.LayoutParams(0, -1, 1);
         importParams.leftMargin = dp(activity, 9);
         actions.addView(importData, importParams);
@@ -139,8 +144,8 @@ final class LauncherPresentation152 {
         settingsButton.setOnClickListener(v -> dialog.show());
         help.setOnClickListener(v -> new android.app.AlertDialog.Builder(activity)
             .setTitle("NHL Legacy 2027")
-            .setMessage("Импортируйте NHL-Legacy-game-data.zip для первого запуска. Выберите качество матча и видеодрайвер в настройках. Изменения применятся после нового запуска игры. Графический кеш можно очистить там же; сохранения не затрагиваются.")
-            .setPositiveButton("Понятно", null).show());
+            .setMessage(tr(activity, "Импортируйте ISO NHL Legacy Edition для первого запуска. Выберите качество матча и видеодрайвер в настройках. Изменения применятся после нового запуска игры. Графический кеш можно очистить там же; сохранения не затрагиваются."))
+            .setPositiveButton(tr(activity, "Понятно"), null).show());
         return root;
     }
 
@@ -154,7 +159,7 @@ final class LauncherPresentation152 {
         LinearLayout header = new LinearLayout(activity);
         header.setPadding(dp(activity, 22), dp(activity, 12), dp(activity, 12), dp(activity, 8));
         header.setGravity(Gravity.CENTER_VERTICAL);
-        TextView title = label(activity, "Настройки", 24, WHITE);
+        TextView title = label(activity, tr(activity, "Настройки"), 24, WHITE);
         title.setTypeface(null, Typeface.BOLD);
         header.addView(title, new LinearLayout.LayoutParams(0, -2, 1));
         Button close = new Button(activity); close.setText("×"); styleOutline(activity, close);
@@ -165,9 +170,9 @@ final class LauncherPresentation152 {
         LinearLayout bottom = new LinearLayout(activity);
         bottom.setPadding(dp(activity, 22), dp(activity, 8), dp(activity, 22), dp(activity, 14));
         bottom.setGravity(Gravity.CENTER_VERTICAL);
-        TextView saved = label(activity, "✓  Настройки сохранены", 12, MUTED);
+        TextView saved = label(activity, tr(activity, "✓  Настройки сохранены"), 12, MUTED);
         bottom.addView(saved, new LinearLayout.LayoutParams(0, -2, 1));
-        Button done = new Button(activity); done.setText("Готово");
+        Button done = new Button(activity); done.setText(tr(activity, "Готово"));
         done.setAllCaps(false); done.setTextColor(NAVY);
         done.setBackground(gradient(activity, new int[]{AQUA, AQUA}, dp(activity, 8), AQUA));
         bottom.addView(done, new LinearLayout.LayoutParams(dp(activity, 110), dp(activity, 42)));
